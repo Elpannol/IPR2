@@ -19,7 +19,6 @@ namespace IPR2
         {
             IPAddress localIP = GetLocalIpAddress();
             _handlers = new List<ClientHandler>();
-            string LogName = "SessionLog/" + DateTime.Today + "/" + DateTime.Now + "/ID=" + _handlers.Count;
 
             bool IpOk = IPAddress.TryParse(localIP.ToString(), out _currentId);
             if (!IpOk)
