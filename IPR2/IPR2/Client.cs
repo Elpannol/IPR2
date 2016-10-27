@@ -9,14 +9,16 @@ namespace IPR2
 {
     class Client
     {
-        public TcpClient _Client { get; set; }
         public string Name { get; set; }
+        readonly string Password;
         public int ID { get; set; }
         public bool IsDoctor { get; set; }
-        public Client(TcpClient client, string name, int Id, bool isDoctor)
+        public Log Log { get; set; }
+
+        public Client(string name, string password, int Id, bool isDoctor, Log log)
         {
-            _Client = client;
             Name = name;
+            Password = password;
             ID = Id;
             IsDoctor = isDoctor;
         }
