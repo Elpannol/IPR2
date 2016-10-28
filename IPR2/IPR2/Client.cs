@@ -7,20 +7,26 @@ using System.Threading.Tasks;
 
 namespace IPR2
 {
-    class Client
+    public class Client
     {
         public string Name { get; set; }
         readonly string Password;
-        public int ID { get; set; }
         public bool IsDoctor { get; set; }
         public Log Log { get; set; }
 
-        public Client(string name, string password, int Id, bool isDoctor, Log log)
+        public Client(string name, string password, bool isDoctor)
         {
             Name = name;
             Password = password;
-            ID = Id;
             IsDoctor = isDoctor;
+            Log = new Log($"{name} log");
+        }
+
+        public override string ToString()
+        {
+            string text = $"Name: {Name}";
+                          
+            return text;
         }
     }
 }

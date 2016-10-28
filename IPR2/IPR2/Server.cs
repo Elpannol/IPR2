@@ -11,12 +11,15 @@ namespace IPR2
 {
     class Server
     {
+        public static DataBase DataBase { get; set; }
+        public static List<ClientHandler> _handlers { get; set; }
+
         private TcpListener _listener;
-        private List<ClientHandler> _handlers;
         private IPAddress _currentId;
 
         public Server()
         {
+            DataBase = new DataBase();
             IPAddress localIP = GetLocalIpAddress();
             _handlers = new List<ClientHandler>();
 
