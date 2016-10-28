@@ -27,5 +27,15 @@ namespace IPR2
         {
             _log.Clear();
         }
+
+        public override string ToString()
+        {
+            string text = "";
+            foreach(var s in _log)
+            {
+                text += s;
+            }
+            return text;
+        }
     }
 }
