@@ -46,16 +46,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Login.cs">
+    <Compile Include="Forms\Login.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Login.Designer.cs">
+    <Compile Include="Forms\Login.Designer.cs">
       <DependentUpon>Login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\NewTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NewTest.Designer.cs">
+      <DependentUpon>NewTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Results.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Results.Designer.cs">
+      <DependentUpon>Results.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Login.resx">
+    <EmbeddedResource Include="Forms\Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NewTest.resx">
+      <DependentUpon>NewTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Results.resx">
+      <DependentUpon>Results.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
