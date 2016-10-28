@@ -30,7 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewTest));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.timeTrackBar = new System.Windows.Forms.TrackBar();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -40,7 +39,6 @@
             this.rondesLabel = new System.Windows.Forms.Label();
             this.tijdLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.timeTrackBar)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -51,13 +49,6 @@
             this.pictureBox1.Size = new System.Drawing.Size(176, 140);
             this.pictureBox1.TabIndex = 12;
             this.pictureBox1.TabStop = false;
-            // 
-            // timeTrackBar
-            // 
-            this.timeTrackBar.Location = new System.Drawing.Point(12, 194);
-            this.timeTrackBar.Name = "timeTrackBar";
-            this.timeTrackBar.Size = new System.Drawing.Size(498, 56);
-            this.timeTrackBar.TabIndex = 13;
             // 
             // label1
             // 
@@ -152,14 +143,12 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.timeTrackBar);
             this.Controls.Add(this.pictureBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "NewTest";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CG Fit";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.timeTrackBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -168,7 +157,6 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.TrackBar timeTrackBar;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;

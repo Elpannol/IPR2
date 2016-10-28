@@ -28,6 +28,8 @@ namespace IPR2Client.Forms
             Visible = false;
             NewTest newTest = new NewTest();
             newTest.Visible = true;
+            Simulator simulator = new Simulator();
+            simulator.Visible = true;
         }
     }
 }
