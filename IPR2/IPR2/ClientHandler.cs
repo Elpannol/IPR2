@@ -130,30 +130,28 @@ namespace IPR2
 
         private static void KillClient(string id)
         {
+            ClientHandler client = null;
             foreach (var c in Server.Handlers)
             {
-                if (c._name.Equals(id))
-                {
-                    c.Client.GetStream().Close();
-                    c.Client.Close();
-                    Server.Handlers.Remove(c);
-                    //you murderer
-                }
+                if (!c._name.Equals(id)) continue;
+                c.Client.GetStream().Close();
+                c.Client.Close();
+                client = c;
+                //you murderer
             }
+            Server.Handlers.Remove(client);
         }
 
         private void ClientSepukku()
         {
+            //When you dishonor the family
             foreach (var c in Server.Handlers)
             {
-                if (c._name.Equals(_name))
-                {
-                    //When you dishonor the family
-                    c.Client.GetStream().Close();
-                    c.Client.Close();
-                    Server.Handlers.Remove(c);
-                }
+                if (!c._name.Equals(_name)) continue;
+                c.Client.GetStream().Close();
+                c.Client.Close();
             }
+            Server.Handlers.Remove(this);
         }
 
         private static TcpClient SearchForName(string name)

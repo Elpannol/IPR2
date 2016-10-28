@@ -14,25 +14,24 @@ namespace IPR2
         {
             new Program();
         }
-        private Server _server;
 
         public Program()
         {
-            _server = new Server();
+            Server server = new Server();
 
-            Thread serverThread = new Thread(_server.run);
+            var serverThread = new Thread(server.Run);
             serverThread.Start();
 
             Console.WriteLine("type 'help' to show available commands.");
             ConsoleLoop();
 
-            foreach (var t in _server.Threads)
+            foreach (var t in server.Threads)
             {
                 t.Interrupt();
                 t.Abort();
             }
 
-            _server.KillAllClient();
+            server.KillAllClient();
 
             //murder the server
             System.Environment.Exit(1);
@@ -87,22 +86,20 @@ namespace IPR2
                     Console.WriteLine("Account already exist\n"
                                       + "Continue? [y/n]");
                     var readLine = Console.ReadLine();
-                    if (readLine != null)
+                    if (readLine == null) continue;
+                    var answer = readLine.ToLower();
+                    if (answer.Equals("y"))
                     {
-                        string answer = readLine.ToLower();
-                        if (answer.Equals("y"))
-                        {
-                            CreateUser(isdoctor);
-                        }
-                        else if (answer.Equals("n"))
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Command not recognised");
-                            continue;
-                        }
+                        CreateUser(isdoctor);
+                    }
+                    else if (answer.Equals("n"))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Command not recognised");
+                        continue;
                     }
                 }
             }
@@ -110,7 +107,7 @@ namespace IPR2
             else
             {
                 Console.WriteLine("enter password...");
-                string password = Console.ReadLine();
+                var password = Console.ReadLine();
                 Server.DataBase.AddClient(new Client(name,password,isdoctor));
             }
                         
@@ -121,7 +118,7 @@ namespace IPR2
         {
             
             Console.WriteLine("give the name of the target");
-            string targetName = Console.ReadLine();
+            var targetName = Console.ReadLine();
             if (Server.DataBase.CheckClient(targetName))
             {
                 Server.DataBase.DeleteClient(targetName);
@@ -135,7 +132,7 @@ namespace IPR2
                     var readLine = Console.ReadLine();
                     if (readLine != null)
                     {
-                        string answer = readLine.ToLower();
+                        var answer = readLine.ToLower();
                         if (answer.Equals("y"))
                         {
                             DeleteUser();

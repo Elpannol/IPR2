@@ -34,7 +34,7 @@ namespace IPR2
 
         }
 
-        public void run()
+        public void Run()
         {
             _listener.Start();
 
