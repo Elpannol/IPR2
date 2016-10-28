@@ -10,29 +10,29 @@ namespace IPR2
 {
     class ClientHandler
     {
-        private readonly TcpClient _client;
+        public TcpClient Client { get; set; }
         private string _name;
 
         public ClientHandler(TcpClient client)
         {
-            _client = client;
+            Client = client;
         }
 
         public void HandleClientThread()
         {
             do
             {
-                dynamic message = JsonConvert.DeserializeObject(ReadMessage(_client));
+                dynamic message = JsonConvert.DeserializeObject(ReadMessage(Client));
                 switch ((string)message.id)
                 {
                     case "check/client":
-                        if (Server.DataBase.CheckClient(message.data.name, message.data.password))
+                        if (Server.DataBase.CheckClient(message.data.name))
                         {
-                            SendAck(_client);
+                            SendAck(Client);
                         }
                         else
                         {
-                            SendNotAck(_client);
+                            SendNotAck(Client);
                         }
                         break;
                     case "client/new":
@@ -72,7 +72,7 @@ namespace IPR2
                         break;
                 }
             }
-            while (_client.Connected);
+            while (Client.Connected);
         }
 
         //TODO: both read and send message need to work with Json
@@ -112,7 +112,7 @@ namespace IPR2
 
         public void MakeClient()
         {
-            SendMessage(_client,
+            SendMessage(Client,
             new
             {
                 id = "make/client",
@@ -122,7 +122,7 @@ namespace IPR2
                 }
             });
 
-            dynamic message = ReadMessage(_client);
+            dynamic message = ReadMessage(Client);
             Server.DataBase.AddClient(new Client(message.data.name, message.data.password,
                 message.data.isDoctor));
             _name = message.data.name;
@@ -134,8 +134,8 @@ namespace IPR2
             {
                 if (c._name.Equals(id))
                 {
-                    c._client.GetStream().Close();
-                    c._client.Close();
+                    c.Client.GetStream().Close();
+                    c.Client.Close();
                     Server.Handlers.Remove(c);
                     //you murderer
                 }
@@ -149,8 +149,8 @@ namespace IPR2
                 if (c._name.Equals(_name))
                 {
                     //When you dishonor the family
-                    c._client.GetStream().Close();
-                    c._client.Close();
+                    c.Client.GetStream().Close();
+                    c.Client.Close();
                     Server.Handlers.Remove(c);
                 }
             }
@@ -163,7 +163,7 @@ namespace IPR2
             {
                 if (c._name.Equals(name))
                 {
-                    client = c._client;
+                    client = c.Client;
                 }
             }
             return client;

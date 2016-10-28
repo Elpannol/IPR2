@@ -13,8 +13,9 @@ namespace IPR2
     {
         public static DataBase DataBase { get; set; }
         public static List<ClientHandler> Handlers { get; set; }
+        public List<Thread> Threads = new List<Thread>();
 
-        private TcpListener _listener;
+        private readonly TcpListener _listener;
         private IPAddress _currentId;
 
         public Server()
@@ -29,9 +30,13 @@ namespace IPR2
                 Console.WriteLine("Couldn't parse the ip address. Exiting code.");
                 Environment.Exit(1);
             }
+            _listener = new TcpListener(_currentId, 1337);
 
-            TcpListener listener = new TcpListener(_currentId, 1337);
-            listener.Start();
+        }
+
+        public void run()
+        {
+            _listener.Start();
 
             //making client handlers and adding them to the list
             while (true)
@@ -39,6 +44,7 @@ namespace IPR2
                 ClientHandler handler = new ClientHandler(CheckForClients(_listener));
                 Thread thread = new Thread(handler.HandleClientThread);
                 thread.Start();
+                Threads.Add(thread);
                 Handlers.Add(handler);
             }
         }
@@ -59,6 +65,19 @@ namespace IPR2
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                     return ip;
             throw new Exception("Local IP Address Not Found!");
+        }
+
+        public void KillAllClient()
+        {
+            Console.WriteLine("Genocide is an option");
+            foreach (var c in Handlers)
+            {
+                c.Client.GetStream().Close();
+                c.Client.Close();
+            }
+            Handlers.Clear();
+
+
         }
     }
 }
