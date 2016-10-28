@@ -23,8 +23,8 @@ namespace IPR2
             IPAddress localIp = GetLocalIpAddress();
             Handlers = new List<ClientHandler>();
 
-            bool IpOk = IPAddress.TryParse(localIp.ToString(), out _currentId);
-            if (!IpOk)
+            bool ipOk = IPAddress.TryParse(localIp.ToString(), out _currentId);
+            if (!ipOk)
             {
                 Console.WriteLine("Couldn't parse the ip address. Exiting code.");
                 Environment.Exit(1);
