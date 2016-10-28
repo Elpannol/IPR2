@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IPR2Client.Forms;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,7 +23,9 @@ namespace IPR2Client
         {
             if(tryLogin(gebruikersNaam.Text, wachtwoord.Text))
             {
-
+                Visible = false;
+                Results results = new Forms.Results();
+                results.Visible = true;
             }
             else
             wrongLabel.Visible = true;
@@ -30,7 +33,7 @@ namespace IPR2Client
 
         private bool tryLogin(string gebruikersnaam, string wachtwoord)
         {
-            return false;
+            return true;
         }
     }
 }
