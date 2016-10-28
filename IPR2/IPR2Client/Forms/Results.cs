@@ -15,6 +15,12 @@ namespace IPR2Client.Forms
         public Results()
         {
             InitializeComponent();
+            FormClosing += Results_FormClosing;
+        }
+
+        private void Results_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Application.Exit();
         }
 
         private void newTestButton_Click(object sender, EventArgs e)

@@ -17,6 +17,12 @@ namespace IPR2Client
         {
             InitializeComponent();
             wrongLabel.Visible = false;
+            FormClosing += Login_FormClosing;
+        }
+
+        private void Login_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Application.Exit();
         }
 
         private void LoginButton_Click(object sender, EventArgs e)
