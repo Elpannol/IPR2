@@ -60,6 +60,7 @@ namespace IPR2
                         Console.WriteLine("\ncommands :" +
                                           "\n- exit" +
                                           "\n- newpatient" +
+                                          "\n- newdoctor" +
                                           "\n- deleteuser" +
                                           "\n- help" +
                                           "\n- showclients");
