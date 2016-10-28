@@ -24,8 +24,8 @@ namespace IPR2
 
         public override string ToString()
         {
-            string text = $"Name: {Name}";
-                          
+            string text = $"Name: {Name}\n" +
+                          $"Is Doctor: {IsDoctor}";
             return text;
         }
 

@@ -9,7 +9,7 @@ namespace IPR2
 {
     public class DataBase
     {
-        public static List<Client> Clients { get; set; }
+        public List<Client> Clients { get; set; }
 
         public DataBase()
         {
@@ -37,21 +37,23 @@ namespace IPR2
 
         public void DeleteClient(string name)
         {
+            Client client = null;
             foreach (var c in Clients)
             {
                 if (c.Name.Equals(name))
                 {
-                    Clients.Remove(c);
+                    client = c;
                 }
             }
+            Clients.Remove(client);
         }
 
-        public bool CheckClient(string name, string password)
+        public bool CheckClient(string name)
         {
             bool isClient = false;
             foreach (var c in Clients)
             {
-                if (c.Name.Equals(name) && c.GetPassword().Equals(password))
+                if (c.Name.Equals(name))
                 {
                     isClient = true;
                 }
