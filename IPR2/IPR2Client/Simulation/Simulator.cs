@@ -1,12 +1,5 @@
 ﻿using IPR2Client.Simulation;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IPR2Client.Forms
@@ -24,11 +17,11 @@ namespace IPR2Client.Forms
             InitializeComponent();
             FormClosing += Simulator_FormClosing;
             UpdateData();
-        }
 
-        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            UpdateSim();
+            Timer timer1 = new Timer();
+            timer1.Tick += new EventHandler(UpdateSim);
+            timer1.Interval = 1000;
+            timer1.Start();
         }
 
         private void Simulator_FormClosing(object sender, FormClosingEventArgs e)
@@ -48,39 +41,45 @@ namespace IPR2Client.Forms
         {
             if (Measurement.Weerstand > 4)
                 Measurement.Weerstand -= 5;
+            UpdateData();
         }
 
         private void weerstandPlus_Click(object sender, EventArgs e)
         {
             if (Measurement.Weerstand < 96)
                 Measurement.Weerstand += 5;
+            UpdateData();
         }
 
         private void hartslagMin_Click(object sender, EventArgs e)
         {
             if (Measurement.Hartslag > 4)
                 Measurement.Hartslag -= 5;
+            UpdateData();
         }
 
         private void hartslagPlus_Click(object sender, EventArgs e)
         {
             if (Measurement.Hartslag < 196)
                 Measurement.Hartslag += 5;
+            UpdateData();
         }
 
         private void rondesMin_Click(object sender, EventArgs e)
         {
             if (Measurement.Rondes > 4)
                 Measurement.Rondes -= 5;
+            UpdateData();
         }
 
         private void rondesPlus_Click(object sender, EventArgs e)
         {
             if (Measurement.Rondes < 196)
                 Measurement.Rondes += 5;
+            UpdateData();
         }
 
-        public void UpdateSim()
+        public void UpdateSim(object sender, EventArgs e)
         {
             if (_time < 5999)
             {
