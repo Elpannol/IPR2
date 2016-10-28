@@ -64,10 +64,11 @@
     <Compile Include="Forms\Results.Designer.cs">
       <DependentUpon>Results.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Simulator.cs">
+    <Compile Include="Simulation\Measurement.cs" />
+    <Compile Include="Simulation\Simulator.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Simulator.Designer.cs">
+    <Compile Include="Simulation\Simulator.Designer.cs">
       <DependentUpon>Simulator.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -81,7 +82,7 @@
     <EmbeddedResource Include="Forms\Results.resx">
       <DependentUpon>Results.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Simulator.resx">
+    <EmbeddedResource Include="Simulation\Simulator.resx">
       <DependentUpon>Simulator.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
