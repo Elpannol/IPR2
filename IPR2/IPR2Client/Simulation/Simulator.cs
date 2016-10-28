@@ -26,6 +26,11 @@ namespace IPR2Client.Forms
             UpdateData();
         }
 
+        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            UpdateSim();
+        }
+
         private void Simulator_FormClosing(object sender, FormClosingEventArgs e)
         {
             Application.Exit();
@@ -33,7 +38,56 @@ namespace IPR2Client.Forms
 
         private void UpdateData()
         {
+            weerstand.Text      = Measurement.Weerstand + "";
+            hartslag.Text       = Measurement.Hartslag + "";
+            rondes.Text         = Measurement.Rondes + "";
+            tijd.Text           = Measurement.Time.ToString();
+        }
 
+        private void weerstandMin_Click(object sender, EventArgs e)
+        {
+            if (Measurement.Weerstand > 4)
+                Measurement.Weerstand -= 5;
+        }
+
+        private void weerstandPlus_Click(object sender, EventArgs e)
+        {
+            if (Measurement.Weerstand < 96)
+                Measurement.Weerstand += 5;
+        }
+
+        private void hartslagMin_Click(object sender, EventArgs e)
+        {
+            if (Measurement.Hartslag > 4)
+                Measurement.Hartslag -= 5;
+        }
+
+        private void hartslagPlus_Click(object sender, EventArgs e)
+        {
+            if (Measurement.Hartslag < 196)
+                Measurement.Hartslag += 5;
+        }
+
+        private void rondesMin_Click(object sender, EventArgs e)
+        {
+            if (Measurement.Rondes > 4)
+                Measurement.Rondes -= 5;
+        }
+
+        private void rondesPlus_Click(object sender, EventArgs e)
+        {
+            if (Measurement.Rondes < 196)
+                Measurement.Rondes += 5;
+        }
+
+        public void UpdateSim()
+        {
+            if (_time < 5999)
+            {
+                _time++;
+                Measurement.Time = new SimpleTime(_time / 60, _time % 60);
+            }
+            UpdateData();
         }
     }
 }
