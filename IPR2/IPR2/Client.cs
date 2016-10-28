@@ -10,14 +10,14 @@ namespace IPR2
     public class Client
     {
         public string Name { get; set; }
-        readonly string Password;
+        private string _password { get; }
         public bool IsDoctor { get; set; }
         public Log Log { get; set; }
 
         public Client(string name, string password, bool isDoctor)
         {
             Name = name;
-            Password = password;
+            _password = password;
             IsDoctor = isDoctor;
             Log = new Log($"{name} log");
         }
@@ -27,6 +27,11 @@ namespace IPR2
             string text = $"Name: {Name}";
                           
             return text;
+        }
+
+        public string GetPassword()
+        {
+            return _password;
         }
     }
 }

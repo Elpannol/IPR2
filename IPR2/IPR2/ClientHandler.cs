@@ -11,7 +11,7 @@ namespace IPR2
     class ClientHandler
     {
         private readonly TcpClient _client;
-        private string _id;
+        private string _name;
 
         public ClientHandler(TcpClient client)
         {
@@ -25,6 +25,16 @@ namespace IPR2
                 dynamic message = JsonConvert.DeserializeObject(ReadMessage(_client));
                 switch ((string)message.id)
                 {
+                    case "check/client":
+                        if (Server.DataBase.CheckClient(message.data.name, message.data.password))
+                        {
+                            SendAck(_client);
+                        }
+                        else
+                        {
+                            SendNotAck(_client);
+                        }
+                        break;
                     case "client/new":
                         MakeClient();
                         break;
@@ -34,7 +44,7 @@ namespace IPR2
                     case "add/measurement":
                         break;
                     case "send/log":
-                        SendMessage(SearchForID(message.data.name), new
+                        SendMessage(SearchForName(message.data.name), new
                         {
                             id = "log/send",
                             data = new
@@ -116,18 +126,18 @@ namespace IPR2
 
                 Server.DataBase.AddClient(new Client(message.data.name, message.data.password,
                     message.data.isDoctor));
-                _id = message.data.id;
+                _name = message.data.name;
         }
 
-        private void KillClient(string id)
+        private static void KillClient(string id)
         {
-            foreach (var c in Server._handlers)
+            foreach (var c in Server.Handlers)
             {
-                if (c._id.Equals(id))
+                if (c._name.Equals(id))
                 {
                     c._client.GetStream().Close();
                     c._client.Close();
-                    Server._handlers.Remove(c);
+                    Server.Handlers.Remove(c);
                     //you murderer
                 }
             }
@@ -135,29 +145,53 @@ namespace IPR2
 
         private void ClientSepukku()
         {
-            foreach (var c in Server._handlers)
+            foreach (var c in Server.Handlers)
             {
-                if (c._id.Equals(_id))
+                if (c._name.Equals(_name))
                 {
                     //When you dishonor the family
                     c._client.GetStream().Close();
                     c._client.Close();
-                    Server._handlers.Remove(c);
+                    Server.Handlers.Remove(c);
                 }
             }
         }
 
-        private TcpClient SearchForID(string id)
+        private static TcpClient SearchForName(string name)
         {
             TcpClient client = null;
-            foreach (var c in Server._handlers)
+            foreach (var c in Server.Handlers)
             {
-                if (c._id.Equals(id))
+                if (c._name.Equals(name))
                 {
                     client = c._client;
                 }
             }
             return client;
+        }
+
+        private void SendAck(TcpClient client)
+        {
+            SendMessage(client, new
+            {
+                id = "Ack",
+                data = new
+                {
+                    ack = true
+                }
+            });
+        }
+
+        private void SendNotAck(TcpClient client)
+        {
+            SendMessage(client, new
+            {
+                id = "Ack",
+                data = new
+                {
+                    ack = false
+                }
+            });
         }
     }
 }

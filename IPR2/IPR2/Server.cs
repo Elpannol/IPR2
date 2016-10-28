@@ -12,7 +12,7 @@ namespace IPR2
     class Server
     {
         public static DataBase DataBase { get; set; }
-        public static List<ClientHandler> _handlers { get; set; }
+        public static List<ClientHandler> Handlers { get; set; }
 
         private TcpListener _listener;
         private IPAddress _currentId;
@@ -20,10 +20,10 @@ namespace IPR2
         public Server()
         {
             DataBase = new DataBase();
-            IPAddress localIP = GetLocalIpAddress();
-            _handlers = new List<ClientHandler>();
+            IPAddress localIp = GetLocalIpAddress();
+            Handlers = new List<ClientHandler>();
 
-            bool IpOk = IPAddress.TryParse(localIP.ToString(), out _currentId);
+            bool IpOk = IPAddress.TryParse(localIp.ToString(), out _currentId);
             if (!IpOk)
             {
                 Console.WriteLine("Couldn't parse the ip address. Exiting code.");
@@ -39,7 +39,7 @@ namespace IPR2
                 ClientHandler handler = new ClientHandler(CheckForClients(_listener));
                 Thread thread = new Thread(handler.HandleClientThread);
                 thread.Start();
-                _handlers.Add(handler);
+                Handlers.Add(handler);
             }
         }
 

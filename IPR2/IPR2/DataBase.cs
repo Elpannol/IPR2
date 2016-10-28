@@ -21,12 +21,12 @@ namespace IPR2
             Clients.Add(client);
         }
 
-        public Client SearchForClient(string id)
+        public Client SearchForClient(string name)
         {
             Client client = null;
             foreach (var c in Clients)
             {
-                if (c.ID.Equals(id))
+                if (c.Name.Equals(name))
                 {
                     client = c;
                 }
@@ -35,16 +35,28 @@ namespace IPR2
             return client;
         }
 
-        public void DeleteClient(string id)
+        public void DeleteClient(string name)
         {
             foreach (var c in Clients)
             {
-                if (c.ID.Equals(id))
+                if (c.Name.Equals(name))
                 {
                     Clients.Remove(c);
                 }
             }
         }
 
+        public bool CheckClient(string name, string password)
+        {
+            bool isClient = false;
+            foreach (var c in Clients)
+            {
+                if (c.Name.Equals(name) && c.GetPassword().Equals(password))
+                {
+                    isClient = true;
+                }
+            }
+            return isClient;
+        }
     }
 }
