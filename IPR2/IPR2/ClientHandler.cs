@@ -10,8 +10,8 @@ namespace IPR2
 {
     class ClientHandler
     {
-        private TcpClient _client;
-        private Client _realClient;
+        private readonly TcpClient _client;
+        private string _name;
 
         public ClientHandler(TcpClient client)
         {
@@ -25,11 +25,47 @@ namespace IPR2
                 dynamic message = JsonConvert.DeserializeObject(ReadMessage(_client));
                 switch ((string)message.id)
                 {
+                    case "check/client":
+                        if (Server.DataBase.CheckClient(message.data.name, message.data.password))
+                        {
+                            SendAck(_client);
+                        }
+                        else
+                        {
+                            SendNotAck(_client);
+                        }
+                        break;
                     case "client/new":
+                        MakeClient();
                         break;
                     case "add/logentry":
+                        Server.DataBase.SearchForClient(message.data.name).Log.AddLogEntry(message.data.text);
                         break;
                     case "add/measurement":
+                        break;
+                    case "send/log":
+                        SendMessage(SearchForName(message.data.name), new
+                        {
+                            id = "log/send",
+                            data = new
+                            {
+                                log = Server.DataBase.SearchForClient(message.data.name).Log.ToString()
+                            }
+                        });
+                        break;
+                    case "kill/client":
+                        if (Server.DataBase.SearchForClient(message.data.name).IsDoctor)
+                        {
+                            Server.DataBase.DeleteClient(message.data.name);
+                            KillClient(message.data.name);
+                        }
+                        break;
+                    case "commit/sepukku":
+                        if (Server.DataBase.SearchForClient(message.data.name).IsDoctor)
+                        {
+                            Server.DataBase.DeleteClient(message.data.name);
+                            ClientSepukku();
+                        }
                         break;
                     default:
                         Console.WriteLine("You're not suppose to be here");
@@ -70,8 +106,8 @@ namespace IPR2
         private void AddMeasurementToLog(dynamic variables)
         {
             //TODO: needs to work for measurements
-            string text = "";
-            _realClient.Log.AddLogEntry(text);
+            string text = variables;
+            Server.DataBase.SearchForClient(variables.data.name).Log.AddLogEntry(text);
         }
 
         public void MakeClient()
@@ -87,7 +123,75 @@ namespace IPR2
             });
 
             dynamic message = ReadMessage(_client);
-            _realClient = new Client(message.data.name, message.data.password, message.data.id, message.data.isDoctor, new Log($"{message.data.name} log"));
+
+                Server.DataBase.AddClient(new Client(message.data.name, message.data.password,
+                    message.data.isDoctor));
+                _name = message.data.name;
+        }
+
+        private static void KillClient(string id)
+        {
+            foreach (var c in Server.Handlers)
+            {
+                if (c._name.Equals(id))
+                {
+                    c._client.GetStream().Close();
+                    c._client.Close();
+                    Server.Handlers.Remove(c);
+                    //you murderer
+                }
+            }
+        }
+
+        private void ClientSepukku()
+        {
+            foreach (var c in Server.Handlers)
+            {
+                if (c._name.Equals(_name))
+                {
+                    //When you dishonor the family
+                    c._client.GetStream().Close();
+                    c._client.Close();
+                    Server.Handlers.Remove(c);
+                }
+            }
+        }
+
+        private static TcpClient SearchForName(string name)
+        {
+            TcpClient client = null;
+            foreach (var c in Server.Handlers)
+            {
+                if (c._name.Equals(name))
+                {
+                    client = c._client;
+                }
+            }
+            return client;
+        }
+
+        private void SendAck(TcpClient client)
+        {
+            SendMessage(client, new
+            {
+                id = "Ack",
+                data = new
+                {
+                    ack = true
+                }
+            });
+        }
+
+        private void SendNotAck(TcpClient client)
+        {
+            SendMessage(client, new
+            {
+                id = "Ack",
+                data = new
+                {
+                    ack = false
+                }
+            });
         }
     }
 }

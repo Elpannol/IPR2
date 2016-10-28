@@ -13,6 +13,7 @@ namespace IPR2
 
         public Log(string name)
         {
+            _log =  new List<string>();
             _logName = name;
         }
 
@@ -30,10 +31,10 @@ namespace IPR2
 
         public override string ToString()
         {
-            string text = "";
+            string text = $"{_logName}\n";
             foreach(var s in _log)
             {
-                text += s;
+                text += $"{s}\n";
             }
             return text;
         }
