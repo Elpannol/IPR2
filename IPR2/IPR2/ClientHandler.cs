@@ -123,10 +123,9 @@ namespace IPR2
             });
 
             dynamic message = ReadMessage(_client);
-
-                Server.DataBase.AddClient(new Client(message.data.name, message.data.password,
-                    message.data.isDoctor));
-                _name = message.data.name;
+            Server.DataBase.AddClient(new Client(message.data.name, message.data.password,
+                message.data.isDoctor));
+            _name = message.data.name;
         }
 
         private static void KillClient(string id)
