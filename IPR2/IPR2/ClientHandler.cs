@@ -31,7 +31,7 @@ namespace IPR2
                             SendAck(Client);
                             _name = (string) message.data.name;
                             Console.WriteLine(
-                                $"Client logged in: {message.data.name}, password: {message.data.password}");
+                                $"Client logged in: {message.data.name}");
                         }
                         else
                         {
@@ -42,11 +42,11 @@ namespace IPR2
                     case "check/doctor":
                         if (Server.DataBase.SearchForClient((string) message.data.name).IsDoctor)
                         {
-                            SendAck(message);
+                            SendAck(Client);
                         }
                         else
                         {
-                            SendNotAck(message);
+                            SendNotAck(Client);
                         }
                         break;
                     case "client/new":
