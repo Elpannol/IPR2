@@ -71,18 +71,15 @@ namespace IPR2
                         });
                         break;
                     case "kill/client":
-                        if (Server.DataBase.SearchForClient((string)message.data.name).IsDoctor)
+                        if (Server.DataBase.SearchForClient(_name).IsDoctor)
                         {
                             Server.DataBase.DeleteClient((string)message.data.name);
                             KillClient((string)message.data.name);
                         }
                         break;
                     case "commit/sepukku":
-                        if (Server.DataBase.SearchForClient((string)message.data.name).IsDoctor)
-                        {
-                            Server.DataBase.DeleteClient((string)message.data.name);
+                            Server.DataBase.DeleteClient(_name);
                             ClientSepukku();
-                        }
                         break;
                     default:
                         Console.WriteLine("You're not suppose to be here");
@@ -96,7 +93,7 @@ namespace IPR2
         public dynamic ReadMessage(TcpClient client)
         {
 
-            byte[] buffer = new byte[128];
+            byte[] buffer = new byte[1024];
             int totalRead = 0;
 
             //read bytes until stream indicates there are no more
