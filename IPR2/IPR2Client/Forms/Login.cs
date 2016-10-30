@@ -81,20 +81,21 @@ namespace IPR2Client
                     id = "check/client",
                     data = new
                     {
-                        name = gebruikersNaam,
+                        name = gebruikersnaam,
                         password = wachtwoord
                     }
                 };
                 SendMessage(client, message);
+                dynamic feedback = JsonConvert.DeserializeObject(ReadMessage(client));
+                return feedback.data.ack;
 
             }
             catch(Exception exception)
             {
                 Console.WriteLine(exception.StackTrace);
+                return false;
             }
 
-            dynamic feedback = JsonConvert.DeserializeObject(ReadMessage(client));
-            return feedback.data.ack;
         }
 
         public static IPAddress GetLocalIpAddress()
