@@ -119,7 +119,7 @@ namespace IPR2Client
         public dynamic ReadMessage(TcpClient client)
         {
 
-            byte[] buffer = new byte[128];
+            byte[] buffer = new byte[1024];
             int totalRead = 0;
 
             //read bytes until stream indicates there are no more

@@ -35,9 +35,9 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.weerstandLabel = new System.Windows.Forms.Label();
-            this.hartslagLabel = new System.Windows.Forms.Label();
-            this.rondesLabel = new System.Windows.Forms.Label();
             this.tijdLabel = new System.Windows.Forms.Label();
+            this.rondesLabel = new System.Windows.Forms.Label();
+            this.hartslagLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -92,49 +92,41 @@
             // 
             // weerstandLabel
             // 
-            this.weerstandLabel.AutoSize = true;
             this.weerstandLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.weerstandLabel.Location = new System.Drawing.Point(145, 30);
             this.weerstandLabel.Name = "weerstandLabel";
             this.weerstandLabel.Size = new System.Drawing.Size(80, 24);
             this.weerstandLabel.TabIndex = 18;
-            this.weerstandLabel.Text = "0000000";
-            // 
-            // hartslagLabel
-            // 
-            this.hartslagLabel.AutoSize = true;
-            this.hartslagLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.hartslagLabel.Location = new System.Drawing.Point(145, 65);
-            this.hartslagLabel.Name = "hartslagLabel";
-            this.hartslagLabel.Size = new System.Drawing.Size(80, 24);
-            this.hartslagLabel.TabIndex = 19;
-            this.hartslagLabel.Text = "0000000";
-            // 
-            // rondesLabel
-            // 
-            this.rondesLabel.AutoSize = true;
-            this.rondesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rondesLabel.Location = new System.Drawing.Point(145, 100);
-            this.rondesLabel.Name = "rondesLabel";
-            this.rondesLabel.Size = new System.Drawing.Size(80, 24);
-            this.rondesLabel.TabIndex = 20;
-            this.rondesLabel.Text = "0000000";
             // 
             // tijdLabel
             // 
-            this.tijdLabel.AutoSize = true;
             this.tijdLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tijdLabel.Location = new System.Drawing.Point(145, 135);
             this.tijdLabel.Name = "tijdLabel";
             this.tijdLabel.Size = new System.Drawing.Size(80, 24);
             this.tijdLabel.TabIndex = 21;
-            this.tijdLabel.Text = "0000000";
+            // 
+            // rondesLabel
+            // 
+            this.rondesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rondesLabel.Location = new System.Drawing.Point(145, 100);
+            this.rondesLabel.Name = "rondesLabel";
+            this.rondesLabel.Size = new System.Drawing.Size(80, 24);
+            this.rondesLabel.TabIndex = 20;
+            // 
+            // hartslagLabel
+            // 
+            this.hartslagLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.hartslagLabel.Location = new System.Drawing.Point(145, 65);
+            this.hartslagLabel.Name = "hartslagLabel";
+            this.hartslagLabel.Size = new System.Drawing.Size(80, 24);
+            this.hartslagLabel.TabIndex = 19;
             // 
             // NewTest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(530, 262);
+            this.ClientSize = new System.Drawing.Size(530, 186);
             this.Controls.Add(this.tijdLabel);
             this.Controls.Add(this.rondesLabel);
             this.Controls.Add(this.hartslagLabel);
@@ -162,8 +154,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label weerstandLabel;
-        private System.Windows.Forms.Label hartslagLabel;
-        private System.Windows.Forms.Label rondesLabel;
         private System.Windows.Forms.Label tijdLabel;
+        private System.Windows.Forms.Label rondesLabel;
+        private System.Windows.Forms.Label hartslagLabel;
     }
 }

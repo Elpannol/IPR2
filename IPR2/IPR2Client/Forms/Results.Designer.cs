@@ -106,33 +106,27 @@
             // 
             // weerstandLabel
             // 
-            this.weerstandLabel.AutoSize = true;
             this.weerstandLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.weerstandLabel.Location = new System.Drawing.Point(355, 30);
             this.weerstandLabel.Name = "weerstandLabel";
             this.weerstandLabel.Size = new System.Drawing.Size(80, 24);
             this.weerstandLabel.TabIndex = 6;
-            this.weerstandLabel.Text = "0000000";
             // 
             // hartslagLabel
             // 
-            this.hartslagLabel.AutoSize = true;
             this.hartslagLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.hartslagLabel.Location = new System.Drawing.Point(355, 65);
             this.hartslagLabel.Name = "hartslagLabel";
             this.hartslagLabel.Size = new System.Drawing.Size(80, 24);
             this.hartslagLabel.TabIndex = 7;
-            this.hartslagLabel.Text = "0000000";
             // 
             // rondesLabel
             // 
-            this.rondesLabel.AutoSize = true;
             this.rondesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rondesLabel.Location = new System.Drawing.Point(355, 100);
             this.rondesLabel.Name = "rondesLabel";
             this.rondesLabel.Size = new System.Drawing.Size(80, 24);
             this.rondesLabel.TabIndex = 8;
-            this.rondesLabel.Text = "0000000";
             // 
             // label4
             // 
@@ -146,13 +140,11 @@
             // 
             // tijdLabel
             // 
-            this.tijdLabel.AutoSize = true;
             this.tijdLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tijdLabel.Location = new System.Drawing.Point(355, 135);
             this.tijdLabel.Name = "tijdLabel";
             this.tijdLabel.Size = new System.Drawing.Size(80, 24);
             this.tijdLabel.TabIndex = 10;
-            this.tijdLabel.Text = "0000000";
             // 
             // pictureBox1
             // 
@@ -165,13 +157,13 @@
             // 
             // loginLabel
             // 
-            this.loginLabel.AutoSize = true;
-            this.loginLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.loginLabel.Location = new System.Drawing.Point(511, 12);
+            this.loginLabel.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.loginLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.loginLabel.Location = new System.Drawing.Point(431, 9);
             this.loginLabel.Name = "loginLabel";
-            this.loginLabel.Size = new System.Drawing.Size(110, 24);
+            this.loginLabel.Size = new System.Drawing.Size(261, 24);
             this.loginLabel.TabIndex = 12;
-            this.loginLabel.Text = "xxxxxxxxxx";
+            this.loginLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // Results
             // 

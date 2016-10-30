@@ -36,7 +36,7 @@ namespace IPR2Client.Simulation
         {
             dynamic toSend = new
             {
-                id = "measurement/add",
+                id = "add/measurement",
                 data = new
                 {
                     weerstand = Weerstand,
@@ -50,7 +50,7 @@ namespace IPR2Client.Simulation
 
         public override string ToString()
         {
-            return $"weerstand: {Weerstand} Watt, hartslag: {Hartslag} BPM, rondes: {Rondes} RPM, tijd: {Time} Min";
+            return $"weerstand: {Weerstand} Watt, hartslag: {Hartslag} BPM, rondes: {Rondes} RPM, tijd: {Time.ToString()} Min";
         }
     }
 

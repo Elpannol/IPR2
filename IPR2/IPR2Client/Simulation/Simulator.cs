@@ -114,7 +114,7 @@ namespace IPR2Client.Forms
 
             dynamic message = new
             {
-                id = "measurement/add",
+                id = "add/measurement",
                 data = new
                 {
                     measurement = Measurement.ToString()
