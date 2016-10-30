@@ -15,41 +15,26 @@ namespace IPR2Client.Forms
     public partial class NewTest : Form
     {
         private TcpClient client;
+        private Simulator simulator;
+        private Results results;
 
-        public NewTest(TcpClient client, string name)
+        public NewTest(TcpClient client, string name, Results results)
         {
+            this.results = results;
             this.client = client;
             InitializeComponent();
             FormClosing += NewTest_FormClosing;
 
-            Simulator simulator = new Simulator(client, this, name);
+            simulator = new Simulator(client, this, name, results);
             simulator.Visible = true;
         }
 
         private void NewTest_FormClosing(object sender, FormClosingEventArgs e)
         {
-            try
-            {
-                dynamic message = new
-                {
-                    id = "client/disconnect",
-                    data = new
-                    {
-
-                    }
-                };
-
-                SendMessage(client, message);
-
-
-                client.GetStream().Close();
-                client.Close();
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception.StackTrace);
-            }
-            Application.Exit();
+            results.Visible = true;
+            simulator.stop();
+            simulator.Dispose();
+            this.Dispose();
         }
 
         public void update(string weerstand, string hartslag, string rondes, string tijd)
