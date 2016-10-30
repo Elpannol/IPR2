@@ -55,32 +55,32 @@ namespace IPR2
                         SendPatients();
                         break;
                     case "add/logentry":
-                        Server.DataBase.SearchForClient(message.data.name).Log.AddLogEntry(message.data.text);
+                        Server.DataBase.SearchForClient((string)message.data.name).Log.AddLogEntry((string)message.data.text);
                         break;
                     case "add/measurement":
                         AddMeasurementToLog(message);
                         break;
                     case "send/log":
-                        SendMessage(SearchForName(message.data.name), new
+                        SendMessage(SearchForName((string)message.data.name), new
                         {
                             id = "log/send",
                             data = new
                             {
-                                log = Server.DataBase.SearchForClient(message.data.name).Log._log
+                                log = Server.DataBase.SearchForClient((string)message.data.name).Log._log
                             }
                         });
                         break;
                     case "kill/client":
-                        if (Server.DataBase.SearchForClient(message.data.name).IsDoctor)
+                        if (Server.DataBase.SearchForClient((string)message.data.name).IsDoctor)
                         {
-                            Server.DataBase.DeleteClient(message.data.name);
-                            KillClient(message.data.name);
+                            Server.DataBase.DeleteClient((string)message.data.name);
+                            KillClient((string)message.data.name);
                         }
                         break;
                     case "commit/sepukku":
-                        if (Server.DataBase.SearchForClient(message.data.name).IsDoctor)
+                        if (Server.DataBase.SearchForClient((string)message.data.name).IsDoctor)
                         {
-                            Server.DataBase.DeleteClient(message.data.name);
+                            Server.DataBase.DeleteClient((string)message.data.name);
                             ClientSepukku();
                         }
                         break;
@@ -120,9 +120,7 @@ namespace IPR2
 
         private void AddMeasurementToLog(dynamic variables)
         {
-            //TODO: needs to work for measurements
-            string text = variables;
-            Server.DataBase.SearchForClient(variables.data.measurement.ToString()).Log.AddLogEntry(text);
+            Server.DataBase.SearchForClient((string)variables.data.name).Log.AddLogEntry((string)variables.data.measurement);
         }
 
         public void MakeClient()
@@ -138,8 +136,8 @@ namespace IPR2
             });
 
             dynamic message = ReadMessage(Client);
-            Server.DataBase.AddClient(new Client(message.data.name, message.data.password,
-                message.data.isDoctor));
+            Server.DataBase.AddClient(new Client((string)message.data.name, (string)message.data.password,
+                (bool)message.data.isDoctor));
             _name = message.data.name;
         }
 
