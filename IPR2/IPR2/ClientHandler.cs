@@ -12,14 +12,10 @@ namespace IPR2
     {
         public TcpClient Client { get; set; }
         private string _name;
-        private byte[] _messageBuffer;
-        public NetworkStream NetworkStream { get; set; }
 
         public ClientHandler(TcpClient client)
         {
             Client = client;
-            NetworkStream = Client.GetStream();
-            _messageBuffer = new byte[0];
         }
 
         public void HandleClientThread()
@@ -29,9 +25,16 @@ namespace IPR2
                 dynamic message = JsonConvert.DeserializeObject(ReadMessage(Client));
                 switch ((string) message.id)
                 {
+                    case "create/client":
+                        Server.DataBase.AddClient(new Client((string)message.data.name, (string)message.data.password,
+                            (bool)message.data.isDoctor));
+                        _name = message.data.name;
+                        break;
                     case "check/client":
+                        Console.WriteLine("Checking client");
                         if (Server.DataBase.CheckClientLogin((string) message.data.name, (string) message.data.password))
                         {
+                            Console.WriteLine("good client");
                             SendAck(Client);
                             _name = (string) message.data.name;
                             Console.WriteLine(
@@ -39,6 +42,7 @@ namespace IPR2
                         }
                         else
                         {
+                            Console.WriteLine("bad client");
                             SendNotAck(Client);
                             Console.WriteLine("Client doesn't exists");
                         }
@@ -78,9 +82,11 @@ namespace IPR2
                     case "add/logentry":
                         Server.DataBase.SearchForClient((string) message.data.name)
                             .Log.AddLogEntry((string) message.data.text);
+                        SendAck(Client);
                         break;
                     case "add/measurement":
                         AddMeasurementToLog(message);
+                        SendAck(Client);
                         break;
                     case "send/log":
                         SendMessage(SearchForName((string) message.data.name), new
@@ -118,67 +124,27 @@ namespace IPR2
 
         public dynamic ReadMessage(TcpClient client)
         {
-            byte[] buffer = new byte[1024];
-            var numberOfBytesRead = Client.GetStream().Read(buffer, 0, buffer.Length);
-            _messageBuffer = ConCat(_messageBuffer, buffer, numberOfBytesRead);
+            byte[] buffer = new byte[1028];
+            int totalRead = 0;
+            do
+            {
+                int read = client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
+                totalRead += read;
+                Console.WriteLine("ReadMessage: " + read);
+            } while (client.GetStream().DataAvailable);
+            dynamic message = Encoding.Unicode.GetString(buffer, 0, totalRead);
+            return message;
 
-            if (_messageBuffer.Length <= 4) return null;
-            var packetLegth = BitConverter.ToInt32(_messageBuffer, 0);
-
-            if (_messageBuffer.Length < packetLegth + 4) return null;
-            var resultMessage = GetMessageFromBuffer(_messageBuffer, packetLegth);
-            return resultMessage;
         }
 
         public void SendMessage(TcpClient client, dynamic message)
         {
             //make sure the other end decodes with the same format!
             message = JsonConvert.SerializeObject(message);
-            var buffer = Encoding.Default.GetBytes(message);
-            var bufferPrepend = BitConverter.GetBytes(buffer.length);
+            byte[] bytes = Encoding.Unicode.GetBytes(message);
+            client.GetStream().Write(bytes, 0, bytes.Length);
+            Client.GetStream().Flush();
 
-            client.GetStream().Write(bufferPrepend, 0, bufferPrepend.Length);
-            client.GetStream().Write(buffer, 0, buffer.length);
-        }
-
-        private string GetMessageFromBuffer(byte[] array, int count)
-        {
-            var newArray = new byte[array.Length - (count + 4)];
-
-            var message = new StringBuilder();
-            message.AppendFormat("{0}", Encoding.ASCII.GetString(array, 4, count));
-
-            for (var i = 0; i < newArray.Length; i++)
-            {
-                newArray[i] = array[i + count + 4];
-            }
-
-            return message.ToString();
-        }
-
-        public byte[] ConCat(byte[] arrayOne, byte[] arrayTwo, int count)
-        {
-            var newArray = new byte[arrayOne.Length + count];
-            Buffer.BlockCopy(arrayOne, 0, newArray, 0, arrayOne.Length);
-            Buffer.BlockCopy(arrayTwo, 0, newArray, arrayOne.Length, count);
-            return newArray;
-        }
-
-        public byte[] SubArray(byte[] data, int index, int length)
-        {
-            var result = new byte[length];
-            Array.Copy(data, index, result, 0, length);
-            return result;
-        }
-
-        public byte[] NotConCat(byte[] array, int count)
-        {
-            var tempArray = new byte[array.Length - count];
-            for (var i = 0; i < array.Length - count; i++)
-            {
-                tempArray[i] = array[count + i];
-            }
-            return tempArray;
         }
 
         private void AddMeasurementToLog(dynamic variables)
@@ -198,7 +164,6 @@ namespace IPR2
             catch (Exception e)
             {
                 Console.WriteLine(e.StackTrace);
-
             }
         }
 
@@ -213,11 +178,6 @@ namespace IPR2
 
                 }
             });
-
-            dynamic message = ReadMessage(Client);
-            Server.DataBase.AddClient(new Client((string)message.data.name, (string)message.data.password,
-                (bool)message.data.isDoctor));
-            _name = message.data.name;
         }
 
         private static void KillClient(string id)
@@ -271,24 +231,26 @@ namespace IPR2
 
         private void SendAck(TcpClient client)
         {
+            bool ack = true;
             SendMessage(client, new
             {
                 id = "ack",
                 data = new
                 {
-                    ack = true
+                    ack = ack
                 }
             });
         }
 
         private void SendNotAck(TcpClient client)
         {
+            bool ack = false;
             SendMessage(client, new
             {
                 id = "ack",
                 data = new
                 {
-                    ack = false
+                    ack = ack
                 }
             });
         }

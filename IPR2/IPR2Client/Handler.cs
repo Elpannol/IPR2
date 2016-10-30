@@ -39,31 +39,29 @@ namespace IPR2Client
             throw new Exception("Local IP Address Not Found!");
         }
 
-        public dynamic ReadMessage(TcpClient client)
+        public dynamic ReadMessage()
         {
-
-            byte[] buffer = new byte[1024];
-            int totalRead = 0;
-
-            //read bytes until stream indicates there are no more
-            do
-            {
-                int read = client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
-                totalRead += read;
-            } while (client.GetStream().DataAvailable);
-            string message = Encoding.Unicode.GetString(buffer, 0, totalRead);
-            return message;
+             byte[] buffer = new byte[1028];
+             int totalRead = 0;
+             do
+             {
+                    int read = Client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
+                    totalRead += read;
+                    Console.WriteLine("ReadMessage: " + read);
+             } while (Client.GetStream().DataAvailable);
+             dynamic message = Encoding.Unicode.GetString(buffer, 0, totalRead);
+                
+             return message;
+           
         }
 
-        public void SendMessage(TcpClient client, dynamic message)
-        {
-            //make sure the other end decodes with the same format!
+        public void SendMessage(dynamic message)
+        { 
+                //make sure the other end decodes with the same format!
             message = JsonConvert.SerializeObject(message);
-            var buffer = Encoding.Default.GetBytes(message);
-            var bufferPrepend = BitConverter.GetBytes(buffer.length);
-
-            client.GetStream().Write(bufferPrepend, 0, bufferPrepend.Length);
-            client.GetStream().Write(buffer, 0, buffer.length);
+            byte[] bytes = Encoding.Unicode.GetBytes(message);
+            Client.GetStream().Write(bytes, 0, bytes.Length);
+            Client.GetStream().Flush();            
         }
 
         public void Disconnect()
@@ -79,7 +77,7 @@ namespace IPR2Client
                     }
                 };
 
-                SendMessage(Client, message);
+                SendMessage(message);
 
 
                 Client.GetStream().Close();
@@ -95,6 +93,7 @@ namespace IPR2Client
         {
             try
             {
+
                 dynamic message = new
                 {
                     id = "check/client",
@@ -104,17 +103,16 @@ namespace IPR2Client
                         password = wachtwoord
                     }
                 };
-                SendMessage(Client, message);
-                dynamic feedback = JsonConvert.DeserializeObject(ReadMessage(Client));
-                return feedback.data.ack;
-
+                SendMessage(message);
+                dynamic feedback = JsonConvert.DeserializeObject(ReadMessage());
+                var ack = feedback.data.ack;
+                return ack;
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                Console.WriteLine(exception.StackTrace);
+                Console.WriteLine(e.StackTrace);
                 return false;
             }
-
         }
 
         public bool IsDoctor(string gebruikersnaam)
@@ -129,9 +127,10 @@ namespace IPR2Client
                         name = gebruikersnaam,
                     }
                 };
-                SendMessage(Client, message);
-                dynamic feedback = JsonConvert.DeserializeObject(ReadMessage(Client));
-                return feedback.data.ack;
+                SendMessage(message);
+                dynamic feedback = JsonConvert.DeserializeObject(ReadMessage());
+                var ack = feedback.data.ack;
+                return ack;
 
             }
             catch (Exception exception)
@@ -141,7 +140,7 @@ namespace IPR2Client
             }
         }
 
-        public void AddLogEntry(string text, string _name)
+        public void AddLogEntry(string text, string name)
         {
             dynamic message = new
             {
@@ -149,16 +148,16 @@ namespace IPR2Client
                 data = new
                 {
                     text = text,
-                    name = _name
+                    name = name
                 }
             };
 
-            SendMessage(Client, message);
+            SendMessage(message);
         }
 
         public void StartTraining()
         {
-            SendMessage(Client, new
+            SendMessage(new
             {
                 id = "start/training"
             });
@@ -171,19 +170,19 @@ namespace IPR2Client
                 id = "add/measurement",
                 data = new
                 {
+                    name = _name,
                     weerstand = measurement.Weerstand,
                     hartslag = measurement.Hartslag,
                     rondes = measurement.Rondes,
                     timeM = measurement.Time.Minutes,
-                    timeS = measurement.Time.Seconds,
-                    name = _name
+                    timeS = measurement.Time.Seconds
                 }
             };
 
-            SendMessage(Client, message);
+            SendMessage(message);
         }
 
-        public List<Training> GetTrainingen(string _name)
+        public List<Training> GetTrainingen(string name)
         {
             try
             {
@@ -192,13 +191,13 @@ namespace IPR2Client
                     id = "load/training",
                     data = new
                     {
-                        name = _name
+                        name = name
                     }
                 };
 
-                SendMessage(Client, message);
+                SendMessage(message);
 
-                dynamic feedback = JsonConvert.DeserializeObject(ReadMessage(Client));
+                dynamic feedback = JsonConvert.DeserializeObject(ReadMessage());
                 return feedback.data.trainingen;
             }
             catch (Exception exception)
@@ -220,9 +219,9 @@ namespace IPR2Client
                     }
                 };
 
-                SendMessage(Client, message);
+                SendMessage(message);
 
-                dynamic feedback = JsonConvert.DeserializeObject(ReadMessage(Client));
+                dynamic feedback = JsonConvert.DeserializeObject(ReadMessage());
                 return (List<User>)feedback.data.users;
             }
             catch (Exception exception)
@@ -230,46 +229,6 @@ namespace IPR2Client
                 Console.WriteLine(exception.StackTrace);
                 return new List<User>();
             }
-        }
-
-        private string GetMessageFromBuffer(byte[] array, int count)
-        {
-            var newArray = new byte[array.Length - (count + 4)];
-
-            var message = new StringBuilder();
-            message.AppendFormat("{0}", Encoding.ASCII.GetString(array, 4, count));
-
-            for (var i = 0; i < newArray.Length; i++)
-            {
-                newArray[i] = array[i + count + 4];
-            }
-
-            return message.ToString();
-        }
-
-        public byte[] ConCat(byte[] arrayOne, byte[] arrayTwo, int count)
-        {
-            var newArray = new byte[arrayOne.Length + count];
-            Buffer.BlockCopy(arrayOne, 0, newArray, 0, arrayOne.Length);
-            Buffer.BlockCopy(arrayTwo, 0, newArray, arrayOne.Length, count);
-            return newArray;
-        }
-
-        public byte[] SubArray(byte[] data, int index, int length)
-        {
-            var result = new byte[length];
-            Array.Copy(data, index, result, 0, length);
-            return result;
-        }
-
-        public byte[] NotConCat(byte[] array, int count)
-        {
-            var tempArray = new byte[array.Length - count];
-            for (var i = 0; i < array.Length - count; i++)
-            {
-                tempArray[i] = array[count + i];
-            }
-            return tempArray;
         }
     }
 }

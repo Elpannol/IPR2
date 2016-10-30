@@ -26,7 +26,7 @@ namespace IPR2Client.Forms
             FormClosing += Results_FormClosing;
             loginLabel.Text = gebruikersnaam;
             _gebruikersnaam = gebruikersnaam;
-            //trainingen = Login.Handler.GetTrainingen(_gebruikersnaam);
+            trainingen = new List<Training>();
         }
 
         private void Results_FormClosing(object sender, FormClosingEventArgs e)
@@ -46,11 +46,13 @@ namespace IPR2Client.Forms
         private void trainingListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             currentTraining = trainingen[trainingListBox.SelectedIndex];
-            currentMeasurement = currentTraining.getMeasurement(timeTrackBar.Value);
+            currentMeasurement = currentTraining.getMeasurement(0);
+
             weerstandLabel.Text = "" +currentMeasurement.Weerstand;
             hartslagLabel.Text = "" + currentMeasurement.Hartslag;
             rondesLabel.Text = "" + currentMeasurement.Rondes;
             tijdLabel.Text = currentMeasurement.Time.ToString();
+
             timeTrackBar.Update();
             timeTrackBar.Maximum = currentTraining.getLength();
         }
@@ -76,11 +78,18 @@ namespace IPR2Client.Forms
 
         private void timeTrackBar_Scroll(object sender, EventArgs e)
         {
-            currentMeasurement = currentTraining.getMeasurement(0);
-            weerstandLabel.Text = "" + currentMeasurement.Weerstand;
-            hartslagLabel.Text = "" + currentMeasurement.Hartslag;
-            rondesLabel.Text = "" + currentMeasurement.Rondes;
-            tijdLabel.Text = currentMeasurement.Time.ToString();
+            try
+            {
+                currentMeasurement = currentTraining.getMeasurement(timeTrackBar.Value);
+                weerstandLabel.Text = "" + currentMeasurement.Weerstand;
+                hartslagLabel.Text = "" + currentMeasurement.Hartslag;
+                rondesLabel.Text = "" + currentMeasurement.Rondes;
+                tijdLabel.Text = currentMeasurement.Time.ToString();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.StackTrace);
+            }
         }
 
     }

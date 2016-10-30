@@ -17,12 +17,11 @@ namespace IPR2Client
 {
     public partial class Login : Form
     {
-        private TcpClient client = new TcpClient();
         public static Handler Handler;
 
         public Login()
         {
-            Handler = new IPR2Client.Handler();
+            Handler = new Handler();
             InitializeComponent();
             wrongLabel.Visible = false;
             FormClosing += Login_FormClosing;
@@ -41,7 +40,7 @@ namespace IPR2Client
                 Visible = false;
                 if (Handler.IsDoctor(gebruikersNaam.Text))
                 {
-                    Doctor doctor = new Forms.Doctor(gebruikersNaam.Text);
+                    Doctor doctor = new Doctor(gebruikersNaam.Text);
                     doctor.Visible = true;
                 }
                 else

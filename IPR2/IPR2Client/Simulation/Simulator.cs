@@ -108,8 +108,10 @@ namespace IPR2Client.Forms
             newTest.update(weerstand.Text, hartslag.Text, rondes.Text, tijd.Text);
 
             Login.Handler.AddLogEntry(Measurement.ToString(), _name);
-            Login.Handler.AddMeasurement(Measurement, _name);
+            Login.Handler.ReadMessage();
             measurements.Add(new Measurement(Measurement.Weerstand, Measurement.Hartslag, Measurement.Rondes, Measurement.Time));
+            Login.Handler.AddMeasurement(Measurement, _name);
+            Login.Handler.ReadMessage();
         }
     }
 }
