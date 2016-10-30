@@ -153,6 +153,11 @@ namespace IPR2
 
         private void ShowClients()
         {
+            if (Server.DataBase.Clients.Count == 0)
+            {
+                Console.WriteLine("There are no clients to show");
+                return;
+            }
             foreach (var c in Server.DataBase.Clients)
             {
                 Console.WriteLine(c.ToString());

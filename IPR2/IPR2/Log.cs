@@ -8,7 +8,7 @@ namespace IPR2
 {
     public class Log
     {
-        public readonly List<string> _log;
+        public List<string> _log { get; set; }
         private readonly string _logName;
 
         public Log(string name)

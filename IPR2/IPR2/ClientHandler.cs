@@ -29,10 +29,12 @@ namespace IPR2
                         if (Server.DataBase.CheckClientLogin(message.data.name, message.data.password))
                         {
                             SendAck(Client);
+                            Console.WriteLine($"Client logged in: {message.data.name}, password: {message.data.password}");
                         }
                         else
                         {
                             SendNotAck(Client);
+                            Console.WriteLine("Client doesn't exists");
                         }
                         break;
                     case "client/new":
@@ -64,7 +66,7 @@ namespace IPR2
                             id = "log/send",
                             data = new
                             {
-                                log = Server.DataBase.SearchForClient(message.data.name).Log
+                                log = Server.DataBase.SearchForClient(message.data.name).Log._log
                             }
                         });
                         break;
