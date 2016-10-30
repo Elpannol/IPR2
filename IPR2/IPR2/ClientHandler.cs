@@ -39,8 +39,15 @@ namespace IPR2
                         MakeClient();
                         break;
                     case "client/disconnect":
-                        Client.GetStream().Close();
-                        Client.Close();
+                        try
+                        {
+                            Client.GetStream().Close();
+                            Client.Close();
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.StackTrace);
+                        }
                         break;
                     case "send/clients":
                         SendPatients();
@@ -57,7 +64,7 @@ namespace IPR2
                             id = "log/send",
                             data = new
                             {
-                                log = Server.DataBase.SearchForClient(message.data.name).Log.ToString()
+                                log = Server.DataBase.SearchForClient(message.data.name).Log
                             }
                         });
                         break;
@@ -142,6 +149,16 @@ namespace IPR2
             foreach (var c in Server.Handlers)
             {
                 if (!c._name.Equals(id)) continue;
+
+                c.SendMessage(c.Client, new
+                {
+                    id = "client/close",
+                    data = new
+                    {
+                        
+                    }
+                });
+
                 c.Client.GetStream().Close();
                 c.Client.Close();
                 client = c;
