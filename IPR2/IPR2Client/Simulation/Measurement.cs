@@ -47,6 +47,11 @@ namespace IPR2Client.Simulation
             };
             return toSend;
         }
+
+        public override string ToString()
+        {
+            return $"weerstand: {Weerstand} Watt, hartslag: {Hartslag} BPM, rondes: {Rondes} RPM, tijd: {Time} Min";
+        }
     }
 
     public struct SimpleTime

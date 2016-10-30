@@ -16,11 +16,12 @@ namespace IPR2Client.Forms
     {
         private TcpClient client;
 
-        public Results(TcpClient client)
+        public Results(TcpClient client, string gebruikersnaam)
         {
             this.client = client;
             InitializeComponent();
             FormClosing += Results_FormClosing;
+            loginLabel.Text = gebruikersnaam;
         }
 
         private void Results_FormClosing(object sender, FormClosingEventArgs e)

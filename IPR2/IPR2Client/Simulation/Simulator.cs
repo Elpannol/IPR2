@@ -111,6 +111,17 @@ namespace IPR2Client.Forms
             }
             tijd.Text = Measurement.Time.ToString();
             newTest.update(weerstand.Text, hartslag.Text, rondes.Text, tijd.Text);
+
+            dynamic message = new
+            {
+                id = "measurement/add",
+                data = new
+                {
+                    measurement = Measurement.ToString()
+                }
+            };
+
+            SendMessage(client, message);
         }
 
         public void SendMessage(TcpClient client, dynamic message)

@@ -41,6 +41,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.tijdLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.loginLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.timeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -68,7 +69,7 @@
             // 
             // timeTrackBar
             // 
-            this.timeTrackBar.Location = new System.Drawing.Point(194, 190);
+            this.timeTrackBar.Location = new System.Drawing.Point(193, 194);
             this.timeTrackBar.Name = "timeTrackBar";
             this.timeTrackBar.Size = new System.Drawing.Size(498, 56);
             this.timeTrackBar.TabIndex = 2;
@@ -156,17 +157,28 @@
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(515, 26);
+            this.pictureBox1.Location = new System.Drawing.Point(515, 55);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(176, 133);
             this.pictureBox1.TabIndex = 11;
             this.pictureBox1.TabStop = false;
+            // 
+            // loginLabel
+            // 
+            this.loginLabel.AutoSize = true;
+            this.loginLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.loginLabel.Location = new System.Drawing.Point(511, 12);
+            this.loginLabel.Name = "loginLabel";
+            this.loginLabel.Size = new System.Drawing.Size(110, 24);
+            this.loginLabel.TabIndex = 12;
+            this.loginLabel.Text = "xxxxxxxxxx";
             // 
             // Results
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(704, 262);
+            this.Controls.Add(this.loginLabel);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.tijdLabel);
             this.Controls.Add(this.label4);
@@ -206,5 +218,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label tijdLabel;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label loginLabel;
     }
 }
