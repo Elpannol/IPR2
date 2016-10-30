@@ -81,7 +81,7 @@ namespace IPR2
             return @"..\..\PatientData\"+ name +".save";
         }
 
-        public void SaveTraining(dynamic message, string filePath)
+        public void SaveTraining(dynamic message)
         {
 
         }
@@ -121,6 +121,32 @@ namespace IPR2
                     writer?.Close();
                 }
             }
+        }
+
+        public List<Client> GiveAllDoctors()
+        {
+            List<Client> doctors = new List<Client>();
+            foreach (var c in Clients)
+            {
+                if (c.IsDoctor)
+                {
+                    doctors.Add(c);
+                }
+            }
+            return doctors;
+        }
+
+        public List<Client> GiveAllPatients()
+        {
+            List<Client> patients = new List<Client>();
+            foreach (var c in Clients)
+            {
+                if (c.IsDoctor)
+                {
+                    patients.Add(c);
+                }
+            }
+            return patients;
         }
 
         private void ReadFromJson(string filePath)

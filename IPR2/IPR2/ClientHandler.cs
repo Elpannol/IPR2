@@ -23,14 +23,15 @@ namespace IPR2
             do
             {
                 dynamic message = JsonConvert.DeserializeObject(ReadMessage(Client));
-                switch ((string)message.id)
+                switch ((string) message.id)
                 {
                     case "check/client":
-                        if (Server.DataBase.CheckClientLogin((string)message.data.name, (string)message.data.password))
+                        if (Server.DataBase.CheckClientLogin((string) message.data.name, (string) message.data.password))
                         {
                             SendAck(Client);
                             _name = (string) message.data.name;
-                            Console.WriteLine($"Client logged in: {message.data.name}, password: {message.data.password}");
+                            Console.WriteLine(
+                                $"Client logged in: {message.data.name}, password: {message.data.password}");
                         }
                         else
                         {
@@ -38,9 +39,23 @@ namespace IPR2
                             Console.WriteLine("Client doesn't exists");
                         }
                         break;
+                    case "check/doctor":
+                        if (Server.DataBase.SearchForClient((string) message.data.name).IsDoctor)
+                        {
+                            SendAck(message);
+                        }
+                        else
+                        {
+                            SendNotAck(message);
+                        }
+                        break;
                     case "client/new":
                         MakeClient();
                         break;
+                    case "start/training":
+                        Server.DataBase.SearchForClient(_name).AddTraining();
+                        break;
+                         
                     case "client/disconnect":
                         try
                         {
@@ -57,26 +72,27 @@ namespace IPR2
                         SendPatients();
                         break;
                     case "add/logentry":
-                        Server.DataBase.SearchForClient((string)message.data.name).Log.AddLogEntry((string)message.data.text);
+                        Server.DataBase.SearchForClient((string) message.data.name)
+                            .Log.AddLogEntry((string) message.data.text);
                         break;
                     case "add/measurement":
                         AddMeasurementToLog(message);
                         break;
                     case "send/log":
-                        SendMessage(SearchForName((string)message.data.name), new
+                        SendMessage(SearchForName((string) message.data.name), new
                         {
                             id = "send/log",
                             data = new
                             {
-                                log = Server.DataBase.SearchForClient((string)message.data.name).Log._log.ToArray()
+                                log = Server.DataBase.SearchForClient((string) message.data.name).Log._log.ToArray()
                             }
                         });
                         break;
                     case "kill/client":
                         if (Server.DataBase.SearchForClient(_name).IsDoctor)
                         {
-                            Server.DataBase.DeleteClient((string)message.data.name);
-                            KillClient((string)message.data.name);
+                            Server.DataBase.DeleteClient((string) message.data.name);
+                            KillClient((string) message.data.name);
                         }
                         break;
                     case "commit/sepukku":
@@ -84,18 +100,18 @@ namespace IPR2
                         ClientSepukku();
                         break;
                     case "save/training":
-                        Server.DataBase.
+                        Server.DataBase.SaveTraining(message);
                         break;
                     case "load/training":
+                        Server.DataBase.LoadTraining(message);
                         break;
                     default:
                         Console.WriteLine("You're not suppose to be here");
                         break;
                 }
-            }
-            while (Client.Connected);
+            } while (Client.Connected);
         }
-        
+
         public dynamic ReadMessage(TcpClient client)
         {
 
@@ -123,7 +139,23 @@ namespace IPR2
 
         private void AddMeasurementToLog(dynamic variables)
         {
-            Server.DataBase.SearchForClient((string)variables.data.name).Log.AddLogEntry((string)variables.data.measurement);
+            try
+            {
+                var tempMes = new Measurement(
+                    (int)variables.data.weerstand,
+                    (int)variables.data.hartslag,
+                    (int)variables.data.rondes,
+                    (int)variables.data.timeM,
+                    (int)variables.data.timeS);
+                var trainingen = Server.DataBase.SearchForClient((string) variables.data.name).Traingingen;
+                trainingen.ElementAt(trainingen.Count-1)._measurements.Add(tempMes);
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+
+            }
         }
 
         public void MakeClient()
