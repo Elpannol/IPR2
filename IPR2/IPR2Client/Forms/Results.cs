@@ -33,8 +33,6 @@ namespace IPR2Client.Forms
 
         private void Results_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Save();
-
             try
             {
                 dynamic message = new
@@ -115,28 +113,6 @@ namespace IPR2Client.Forms
             hartslagLabel.Text = "" + currentMeasurement.Hartslag;
             rondesLabel.Text = "" + currentMeasurement.Rondes;
             tijdLabel.Text = currentMeasurement.Time.ToString();
-        }
-
-        private void Save()
-        {
-            //try
-            //{
-            //    dynamic message = new
-            //    {
-            //        id = "save/training",
-            //        data = new
-            //        {
-            //            name = _gebruikersnaam,
-            //            trainingen = trainingen
-            //        }
-            //    };
-
-            //    SendMessage(client, message);
-            //}
-            //catch (Exception exception)
-            //{
-            //    Console.WriteLine(exception.StackTrace);
-            //}
         }
 
         private List<Training> getTrainingen()
