@@ -43,6 +43,7 @@ namespace IPR2
                     case "client/disconnect":
                         try
                         {
+                            Console.WriteLine($"{_name} disconnected");
                             Client.GetStream().Close();
                             Client.Close();
                         }

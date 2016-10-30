@@ -22,6 +22,7 @@ namespace IPR2
             var src = DateTime.Now;
             string totalText = $"{src.Year}-{src.Month}-{src.Day} {src.Hour}:{src.Minute}:{src.Second} \t {text}";
             _log.Add(totalText);
+            Console.WriteLine(totalText);
         }
 
         public void DeleteLog()
