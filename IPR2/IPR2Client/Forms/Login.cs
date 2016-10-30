@@ -82,26 +82,26 @@ namespace IPR2Client
 
         private bool checkDoctor(string gebruikersnaam)
         {
-            //try
-            //{
-            //    dynamic message = new
-            //    {
-            //        id = "check/doctor",
-            //        data = new
-            //        {
-            //            name = gebruikersnaam,
-            //        }
-            //    };
-            //    SendMessage(client, message);
-            //    dynamic feedback = JsonConvert.DeserializeObject(ReadMessage(client));
-            //    return feedback.data.ack;
+            try
+            {
+                dynamic message = new
+                {
+                    id = "check/doctor",
+                    data = new
+                    {
+                        name = gebruikersnaam,
+                    }
+                };
+                SendMessage(client, message);
+                dynamic feedback = JsonConvert.DeserializeObject(ReadMessage(client));
+                return feedback.data.ack;
 
-            //}
-            //catch (Exception exception)
-            //{
-            //    Console.WriteLine(exception.StackTrace);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.StackTrace);
                 return false;
-            //}
+            }
         }
 
         private bool tryLogin(string gebruikersnaam, string wachtwoord)
