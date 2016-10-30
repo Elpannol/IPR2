@@ -108,18 +108,41 @@ namespace IPR2Client.Forms
             }
             tijd.Text = Measurement.Time.ToString();
             newTest.update(weerstand.Text, hartslag.Text, rondes.Text, tijd.Text);
+
+           AddLogEntry(Measurement.ToString());
+
             dynamic message = new
             {
                 id = "add/measurement",
                 data = new
                 {
-                    measurement = Measurement.ToString(),
+                    weerstand = Measurement.Weerstand,
+                    hartslag = Measurement.Hartslag,
+                    rondes = Measurement.Rondes,
+                    timeM = Measurement.Time.Minutes,
+                    timeS = Measurement.Time.Seconds,
                     name = _name
                 }
             };
 
             SendMessage(client, message);
+
             measurements.Add(new Measurement(Measurement.Weerstand, Measurement.Hartslag, Measurement.Rondes, Measurement.Time));
+        }
+
+        public void AddLogEntry(string text)
+        {
+            dynamic message = new
+            {
+                id = "add/logentry",
+                data = new
+                {
+                    text = text,
+                    name = _name
+                }
+            };
+
+            SendMessage(client, message);
         }
 
         public void SendMessage(TcpClient client, dynamic message)

@@ -64,6 +64,11 @@ namespace IPR2Client.Forms
             Visible = false;
             NewTest newTest = new NewTest(client, _gebruikersnaam, this);
             newTest.Visible = true;
+
+            SendMessage(client, new
+            {
+                id = "start/training"
+            });
         }
 
         public void SendMessage(TcpClient client, dynamic message)
