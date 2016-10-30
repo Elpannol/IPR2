@@ -26,7 +26,7 @@ namespace IPR2
                 switch ((string)message.id)
                 {
                     case "check/client":
-                        if (Server.DataBase.CheckClient(message.data.name))
+                        if (Server.DataBase.CheckClient(message.data.name, message.data.password))
                         {
                             SendAck(Client);
                         }
@@ -102,10 +102,8 @@ namespace IPR2
             {
                 int read = client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
                 totalRead += read;
-                Console.WriteLine("ReadMessage: " + read);
             } while (client.GetStream().DataAvailable);
             string message = Encoding.Unicode.GetString(buffer, 0, totalRead);
-            Console.WriteLine(message);
             return message;
         }
 
@@ -172,7 +170,7 @@ namespace IPR2
             //When you dishonor the family
             foreach (var c in Server.Handlers)
             {
-                if (!c._name.Equals(_name)) continue;
+                if (!c._name.Equals(_name) || !c.Client.Connected) continue;
                 c.Client.GetStream().Close();
                 c.Client.Close();
             }
@@ -196,7 +194,7 @@ namespace IPR2
         {
             SendMessage(client, new
             {
-                id = "Ack",
+                id = "ack",
                 data = new
                 {
                     ack = true
@@ -208,7 +206,7 @@ namespace IPR2
         {
             SendMessage(client, new
             {
-                id = "Ack",
+                id = "ack",
                 data = new
                 {
                     ack = false

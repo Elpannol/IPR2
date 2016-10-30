@@ -48,12 +48,12 @@ namespace IPR2
             Clients.Remove(client);
         }
 
-        public bool CheckClient(string name)
+        public bool CheckClient(string name, string password)
         {
             bool isClient = false;
             foreach (var c in Clients)
             {
-                if (c.Name.Equals(name))
+                if (c.Name.Equals(name) && c.GetPassword().Equals(password))
                 {
                     isClient = true;
                 }
