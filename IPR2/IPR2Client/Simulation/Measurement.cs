@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IPR2Client.Simulation
 {
-    class Measurement : IComparable<Measurement>
+    public class Measurement : IComparable<Measurement>
     {
         public int Weerstand { get; set; }
         public int Hartslag { get; set; }
@@ -19,6 +19,14 @@ namespace IPR2Client.Simulation
             Hartslag = hartslag;
             Rondes = rondes;
             Time = new SimpleTime(time1, time2);
+        }
+
+        public Measurement(int weerstand, int hartslag, int rondes, SimpleTime time)
+        {
+            Weerstand = weerstand;
+            Hartslag = hartslag;
+            Rondes = rondes;
+            Time = time;
         }
 
         public int CompareTo(Measurement other)

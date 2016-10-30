@@ -65,7 +65,7 @@ namespace IPR2Client
             if(tryLogin(gebruikersNaam.Text, wachtwoord.Text))
             {
                 Visible = false;
-                Results results = new Forms.Results(client, gebruikersNaam.Text);
+                Results results = new Results(client, gebruikersNaam.Text);
                 results.Visible = true;
             }
             else

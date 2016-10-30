@@ -1,6 +1,7 @@
 ﻿using IPR2Client.Simulation;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows.Forms;
@@ -14,9 +15,13 @@ namespace IPR2Client.Forms
         private TcpClient client;
         private NewTest newTest;
         private string _name;
+        private Results results;
+        private Timer timer1;
+        private List<Measurement> measurements = new List<Measurement>();
 
-        public Simulator(TcpClient client, NewTest newTest, string name)
+        public Simulator(TcpClient client, NewTest newTest, string name, Results results)
         {
+            this.results = results;
             _name = name;
             this.newTest = newTest;
             this.client = client;
@@ -30,7 +35,7 @@ namespace IPR2Client.Forms
             hartslag.Text = Measurement.Hartslag + "";
             rondes.Text = Measurement.Rondes + "";
 
-            Timer timer1 = new Timer();
+            timer1 = new Timer();
             timer1.Tick += new EventHandler(UpdateSim);
             timer1.Interval = 1000;
             timer1.Start();
@@ -38,27 +43,17 @@ namespace IPR2Client.Forms
 
         private void Simulator_FormClosing(object sender, FormClosingEventArgs e)
         {
-            try
-            {
-                dynamic message = new
-                {
-                    id = "client/disconnect",
-                    data = new
-                    {
+            results.Visible = true;
+            newTest.Dispose();
+            stop();
+            this.Dispose();
+        }
 
-                    }
-                };
-
-                SendMessage(client, message);
-
-                client.GetStream().Close();
-                client.Close();
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception.StackTrace);
-            }
-            Application.Exit();
+        public void stop()
+        {
+            timer1.Stop();
+            Training training = new Training(measurements, _name);
+            results.AddTraining(training);
         }
 
         private void weerstandMin_Click(object sender, EventArgs e)
@@ -113,7 +108,6 @@ namespace IPR2Client.Forms
             }
             tijd.Text = Measurement.Time.ToString();
             newTest.update(weerstand.Text, hartslag.Text, rondes.Text, tijd.Text);
-
             dynamic message = new
             {
                 id = "add/measurement",
@@ -125,6 +119,7 @@ namespace IPR2Client.Forms
             };
 
             SendMessage(client, message);
+            measurements.Add(new Measurement(Measurement.Weerstand, Measurement.Hartslag, Measurement.Rondes, Measurement.Time));
         }
 
         public void SendMessage(TcpClient client, dynamic message)
