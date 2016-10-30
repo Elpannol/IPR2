@@ -59,9 +59,11 @@ namespace IPR2Client
         {
             //make sure the other end decodes with the same format!
             message = JsonConvert.SerializeObject(message);
-            byte[] bytes = Encoding.Unicode.GetBytes(message);
-            client.GetStream().Write(bytes, 0, bytes.Length);
-            client.GetStream().Flush();
+            var buffer = Encoding.Default.GetBytes(message);
+            var bufferPrepend = BitConverter.GetBytes(buffer.length);
+
+            client.GetStream().Write(bufferPrepend, 0, bufferPrepend.Length);
+            client.GetStream().Write(buffer, 0, buffer.length);
         }
 
         public void Disconnect()
@@ -228,6 +230,46 @@ namespace IPR2Client
                 Console.WriteLine(exception.StackTrace);
                 return new List<User>();
             }
+        }
+
+        private string GetMessageFromBuffer(byte[] array, int count)
+        {
+            var newArray = new byte[array.Length - (count + 4)];
+
+            var message = new StringBuilder();
+            message.AppendFormat("{0}", Encoding.ASCII.GetString(array, 4, count));
+
+            for (var i = 0; i < newArray.Length; i++)
+            {
+                newArray[i] = array[i + count + 4];
+            }
+
+            return message.ToString();
+        }
+
+        public byte[] ConCat(byte[] arrayOne, byte[] arrayTwo, int count)
+        {
+            var newArray = new byte[arrayOne.Length + count];
+            Buffer.BlockCopy(arrayOne, 0, newArray, 0, arrayOne.Length);
+            Buffer.BlockCopy(arrayTwo, 0, newArray, arrayOne.Length, count);
+            return newArray;
+        }
+
+        public byte[] SubArray(byte[] data, int index, int length)
+        {
+            var result = new byte[length];
+            Array.Copy(data, index, result, 0, length);
+            return result;
+        }
+
+        public byte[] NotConCat(byte[] array, int count)
+        {
+            var tempArray = new byte[array.Length - count];
+            for (var i = 0; i < array.Length - count; i++)
+            {
+                tempArray[i] = array[count + i];
+            }
+            return tempArray;
         }
     }
 }
