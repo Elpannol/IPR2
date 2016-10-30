@@ -1,5 +1,8 @@
 ﻿using IPR2Client.Simulation;
+using Newtonsoft.Json;
 using System;
+using System.Net.Sockets;
+using System.Text;
 using System.Windows.Forms;
 
 namespace IPR2Client.Forms
@@ -8,9 +11,11 @@ namespace IPR2Client.Forms
     {
         private readonly Measurement Measurement;
         private int _time;
+        private TcpClient client;
 
-        public Simulator()
+        public Simulator(TcpClient client)
         {
+            this.client = client;
             _time = 0;
             SimpleTime temp = new SimpleTime(_time / 60, _time % 60);
             Measurement = new Measurement(20, 100, 50, temp.Minutes, temp.Seconds);
@@ -29,6 +34,8 @@ namespace IPR2Client.Forms
 
         private void Simulator_FormClosing(object sender, FormClosingEventArgs e)
         {
+            client.GetStream().Close();
+            client.Close();
             Application.Exit();
         }
 
@@ -82,6 +89,15 @@ namespace IPR2Client.Forms
                 Measurement.Time = new SimpleTime(_time / 60, _time % 60);
             }
             tijd.Text = Measurement.Time.ToString();
+        }
+
+        public void SendMessage(TcpClient client, dynamic message)
+        {
+            //make sure the other end decodes with the same format!
+            message = JsonConvert.SerializeObject(message);
+            byte[] bytes = Encoding.Unicode.GetBytes(message);
+            client.GetStream().Write(bytes, 0, bytes.Length);
+            client.GetStream().Flush();
         }
     }
 }
