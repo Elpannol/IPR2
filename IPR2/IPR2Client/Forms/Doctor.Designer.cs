@@ -55,6 +55,7 @@
             this.trainingListBox.Name = "trainingListBox";
             this.trainingListBox.Size = new System.Drawing.Size(176, 220);
             this.trainingListBox.TabIndex = 2;
+            this.trainingListBox.SelectedIndexChanged += new System.EventHandler(this.trainingListBox_SelectedIndexChanged);
             // 
             // userListBox
             // 
@@ -65,6 +66,7 @@
             this.userListBox.Name = "userListBox";
             this.userListBox.Size = new System.Drawing.Size(176, 220);
             this.userListBox.TabIndex = 3;
+            this.userListBox.SelectedIndexChanged += new System.EventHandler(this.userListBox_SelectedIndexChanged);
             // 
             // timeTrackBar
             // 
@@ -72,6 +74,7 @@
             this.timeTrackBar.Name = "timeTrackBar";
             this.timeTrackBar.Size = new System.Drawing.Size(498, 56);
             this.timeTrackBar.TabIndex = 4;
+            this.timeTrackBar.Scroll += new System.EventHandler(this.timeTrackBar_Scroll);
             // 
             // label1
             // 

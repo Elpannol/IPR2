@@ -78,7 +78,7 @@ namespace IPR2Client.Forms
         private void trainingListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             currentTraining = trainingen[trainingListBox.SelectedIndex];
-            currentMeasurement = currentTraining.getMeasurement(0);
+            currentMeasurement = currentTraining.getMeasurement(timeTrackBar.Value);
             weerstandLabel.Text = "" +currentMeasurement.Weerstand;
             hartslagLabel.Text = "" + currentMeasurement.Hartslag;
             rondesLabel.Text = "" + currentMeasurement.Rondes;
@@ -105,7 +105,7 @@ namespace IPR2Client.Forms
 
         private void timeTrackBar_Scroll(object sender, EventArgs e)
         {
-            currentMeasurement = currentTraining.getMeasurement(timeTrackBar.Value);
+            currentMeasurement = currentTraining.getMeasurement(0);
             weerstandLabel.Text = "" + currentMeasurement.Weerstand;
             hartslagLabel.Text = "" + currentMeasurement.Hartslag;
             rondesLabel.Text = "" + currentMeasurement.Rondes;

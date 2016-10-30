@@ -65,11 +65,43 @@ namespace IPR2Client
             if(tryLogin(gebruikersNaam.Text, wachtwoord.Text))
             {
                 Visible = false;
-                Results results = new Results(client, gebruikersNaam.Text);
-                results.Visible = true;
+                if (checkDoctor(gebruikersNaam.Text))
+                {
+                    Doctor doctor = new Forms.Doctor(client, gebruikersNaam.Text);
+                    doctor.Visible = true;
+                }
+                else
+                {
+                    Results results = new Results(client, gebruikersNaam.Text);
+                    results.Visible = true;
+                }
             }
             else
             wrongLabel.Visible = true;
+        }
+
+        private bool checkDoctor(string gebruikersnaam)
+        {
+            //try
+            //{
+            //    dynamic message = new
+            //    {
+            //        id = "check/doctor",
+            //        data = new
+            //        {
+            //            name = gebruikersnaam,
+            //        }
+            //    };
+            //    SendMessage(client, message);
+            //    dynamic feedback = JsonConvert.DeserializeObject(ReadMessage(client));
+            //    return feedback.data.ack;
+
+            //}
+            //catch (Exception exception)
+            //{
+            //    Console.WriteLine(exception.StackTrace);
+                return false;
+            //}
         }
 
         private bool tryLogin(string gebruikersnaam, string wachtwoord)
