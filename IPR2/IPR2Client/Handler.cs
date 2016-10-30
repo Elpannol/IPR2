@@ -15,6 +15,7 @@ namespace IPR2Client
     {
         private TcpClient Client;
         private IPAddress _currentId;
+        private byte[] _messageBuffer;
 
         public Handler()
         {
@@ -41,18 +42,16 @@ namespace IPR2Client
 
         public dynamic ReadMessage(TcpClient client)
         {
-
             byte[] buffer = new byte[1024];
-            int totalRead = 0;
+            var numberOfBytesRead = Client.GetStream().Read(buffer, 0, buffer.Length);
+            _messageBuffer = ConCat(_messageBuffer, buffer, numberOfBytesRead);
 
-            //read bytes until stream indicates there are no more
-            do
-            {
-                int read = client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
-                totalRead += read;
-            } while (client.GetStream().DataAvailable);
-            string message = Encoding.Unicode.GetString(buffer, 0, totalRead);
-            return message;
+            if (_messageBuffer.Length <= 4) return null;
+            var packetLegth = BitConverter.ToInt32(_messageBuffer, 0);
+
+            if (_messageBuffer.Length < packetLegth + 4) return null;
+            var resultMessage = GetMessageFromBuffer(_messageBuffer, packetLegth);
+            return resultMessage;
         }
 
         public void SendMessage(TcpClient client, dynamic message)
@@ -64,6 +63,7 @@ namespace IPR2Client
 
             client.GetStream().Write(bufferPrepend, 0, bufferPrepend.Length);
             client.GetStream().Write(buffer, 0, buffer.length);
+            client.GetStream().Flush();
         }
 
         public void Disconnect()
