@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -38,12 +39,24 @@ namespace IPR2Client
 
         private void Login_FormClosing(object sender, FormClosingEventArgs e)
         {
-            dynamic message = ""
+            try {
+            dynamic message = new {
+                            id = "client/disconnect",
+                            data = new
+                            {
+
+                            }};
 
             SendMessage(client, message);
 
+          
             client.GetStream().Close();
             client.Close();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.StackTrace);
+            }
             Application.Exit();
         }
 
