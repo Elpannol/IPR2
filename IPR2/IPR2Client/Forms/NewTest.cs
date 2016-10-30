@@ -14,23 +14,22 @@ namespace IPR2Client.Forms
 {
     public partial class NewTest : Form
     {
-        private TcpClient client;
         private Simulator simulator;
         private Results results;
 
-        public NewTest(TcpClient client, string name, Results results)
+        public NewTest(string name, Results results)
         {
             this.results = results;
-            this.client = client;
             InitializeComponent();
             FormClosing += NewTest_FormClosing;
 
-            simulator = new Simulator(client, this, name, results);
+            simulator = new Simulator(this, name, results);
             simulator.Visible = true;
         }
 
         private void NewTest_FormClosing(object sender, FormClosingEventArgs e)
         {
+            results.refresh();
             results.Visible = true;
             simulator.stop();
             simulator.Dispose();
@@ -43,15 +42,6 @@ namespace IPR2Client.Forms
             hartslagLabel.Text  = hartslag     + " BPM";
             rondesLabel.Text    = rondes       + " RPM";
             tijdLabel.Text      = tijd         + " Minuten";
-        }
-
-        public void SendMessage(TcpClient client, dynamic message)
-        {
-            //make sure the other end decodes with the same format!
-            message = JsonConvert.SerializeObject(message);
-            byte[] bytes = Encoding.Unicode.GetBytes(message);
-            client.GetStream().Write(bytes, 0, bytes.Length);
-            client.GetStream().Flush();
         }
     }
 }

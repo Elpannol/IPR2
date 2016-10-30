@@ -15,67 +15,32 @@ namespace IPR2Client.Forms
 {
     public partial class Results : Form
     {
-        private TcpClient client;
         private string _gebruikersnaam;
         private List<Training> trainingen;
         private Training currentTraining;
         private Measurement currentMeasurement;
 
-        public Results(TcpClient client, string gebruikersnaam)
+        public Results(string gebruikersnaam)
         {
-            this.client = client;
             InitializeComponent();
             FormClosing += Results_FormClosing;
             loginLabel.Text = gebruikersnaam;
             _gebruikersnaam = gebruikersnaam;
-            trainingen = getTrainingen();
+            //trainingen = Login.Handler.GetTrainingen(_gebruikersnaam);
         }
 
         private void Results_FormClosing(object sender, FormClosingEventArgs e)
         {
-            try
-            {
-                dynamic message = new
-                {
-                    id = "client/disconnect",
-                    data = new
-                    {
-
-                    }
-                };
-
-                SendMessage(client, message);
-
-
-                client.GetStream().Close();
-                client.Close();
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception.StackTrace);
-            }
+            Login.Handler.Disconnect();
             Application.Exit();
         }
 
         private void newTestButton_Click(object sender, EventArgs e)
         {
             Visible = false;
-            NewTest newTest = new NewTest(client, _gebruikersnaam, this);
+            Login.Handler.StartTraining();
+            NewTest newTest = new NewTest(_gebruikersnaam, this);
             newTest.Visible = true;
-
-            SendMessage(client, new
-            {
-                id = "start/training"
-            });
-        }
-
-        public void SendMessage(TcpClient client, dynamic message)
-        {
-            //make sure the other end decodes with the same format!
-            message = JsonConvert.SerializeObject(message);
-            byte[] bytes = Encoding.Unicode.GetBytes(message);
-            client.GetStream().Write(bytes, 0, bytes.Length);
-            client.GetStream().Flush();
         }
 
         private void trainingListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -100,6 +65,9 @@ namespace IPR2Client.Forms
         {
             try { trainingListBox.Items.Clear(); }
             catch (Exception exception) { Console.WriteLine(exception.StackTrace); }
+
+            //trainingen = Login.Handler.GetTrainingen(_gebruikersnaam);
+
             for(int i = 0; i<trainingen.Count; i++)
             {
                 trainingListBox.Items.Add(string.Format("Training " + (i+1)));
@@ -115,47 +83,5 @@ namespace IPR2Client.Forms
             tijdLabel.Text = currentMeasurement.Time.ToString();
         }
 
-        private List<Training> getTrainingen()
-        {
-            //try
-            //{
-            //    dynamic message = new
-            //    {
-            //        id = "load/training",
-            //        data = new
-            //        {
-            //            name = _gebruikersnaam
-            //        }
-            //    };
-
-            //    SendMessage(client, message);
-
-            //    dynamic feedback = JsonConvert.DeserializeObject(ReadMessage(client));
-            //    return feedback.data.trainingen;
-            //}
-            //catch (Exception exception)
-            //{
-            //    Console.WriteLine(exception.StackTrace);
-                return new List<Training>();
-            //}
-        }
-
-        public dynamic ReadMessage(TcpClient client)
-        {
-
-            byte[] buffer = new byte[1024];
-            int totalRead = 0;
-
-            //read bytes until stream indicates there are no more
-            do
-            {
-                int read = client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
-                totalRead += read;
-                Console.WriteLine("ReadMessage: " + read);
-            } while (client.GetStream().DataAvailable);
-            string message = Encoding.Unicode.GetString(buffer, 0, totalRead);
-            Console.WriteLine(message);
-            return message;
-        }
     }
 }

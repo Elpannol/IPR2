@@ -12,19 +12,17 @@ namespace IPR2Client.Forms
     {
         private readonly Measurement Measurement;
         private int _time;
-        private TcpClient client;
         private NewTest newTest;
         private string _name;
         private Results results;
         private Timer timer1;
         private List<Measurement> measurements = new List<Measurement>();
 
-        public Simulator(TcpClient client, NewTest newTest, string name, Results results)
+        public Simulator(NewTest newTest, string name, Results results)
         {
             this.results = results;
             _name = name;
             this.newTest = newTest;
-            this.client = client;
             _time = 0;
             SimpleTime temp = new SimpleTime(_time / 60, _time % 60);
             Measurement = new Measurement(20, 100, 50, temp.Minutes, temp.Seconds);
@@ -109,49 +107,9 @@ namespace IPR2Client.Forms
             tijd.Text = Measurement.Time.ToString();
             newTest.update(weerstand.Text, hartslag.Text, rondes.Text, tijd.Text);
 
-           AddLogEntry(Measurement.ToString());
-
-            dynamic message = new
-            {
-                id = "add/measurement",
-                data = new
-                {
-                    weerstand = Measurement.Weerstand,
-                    hartslag = Measurement.Hartslag,
-                    rondes = Measurement.Rondes,
-                    timeM = Measurement.Time.Minutes,
-                    timeS = Measurement.Time.Seconds,
-                    name = _name
-                }
-            };
-
-            SendMessage(client, message);
-
+            Login.Handler.AddLogEntry(Measurement.ToString(), _name);
+            Login.Handler.AddMeasurement(Measurement, _name);
             measurements.Add(new Measurement(Measurement.Weerstand, Measurement.Hartslag, Measurement.Rondes, Measurement.Time));
-        }
-
-        public void AddLogEntry(string text)
-        {
-            dynamic message = new
-            {
-                id = "add/logentry",
-                data = new
-                {
-                    text = text,
-                    name = _name
-                }
-            };
-
-            SendMessage(client, message);
-        }
-
-        public void SendMessage(TcpClient client, dynamic message)
-        {
-            //make sure the other end decodes with the same format!
-            message = JsonConvert.SerializeObject(message);
-            byte[] bytes = Encoding.Unicode.GetBytes(message);
-            client.GetStream().Write(bytes, 0, bytes.Length);
-            client.GetStream().Flush();
         }
     }
 }

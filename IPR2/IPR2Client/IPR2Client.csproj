@@ -74,7 +74,8 @@
     <Compile Include="Forms\Results.Designer.cs">
       <DependentUpon>Results.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\User.cs" />
+    <Compile Include="Handler.cs" />
+    <Compile Include="User.cs" />
     <Compile Include="Simulation\Measurement.cs" />
     <Compile Include="Simulation\Simulator.cs">
       <SubType>Form</SubType>

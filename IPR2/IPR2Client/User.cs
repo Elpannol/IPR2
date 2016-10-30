@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IPR2Client.Forms
 {
-    class User
+    public class User
     {
         public string _gebruikersnaam {get;set;}
 
