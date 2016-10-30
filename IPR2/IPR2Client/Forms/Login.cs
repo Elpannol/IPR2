@@ -65,7 +65,7 @@ namespace IPR2Client
             if(tryLogin(gebruikersNaam.Text, wachtwoord.Text))
             {
                 Visible = false;
-                Results results = new Forms.Results(client);
+                Results results = new Forms.Results(client, gebruikersNaam.text);
                 results.Visible = true;
             }
             else
@@ -74,7 +74,27 @@ namespace IPR2Client
 
         private bool tryLogin(string gebruikersnaam, string wachtwoord)
         {
-            return true;
+            dynamic message;
+
+            try
+            {
+                message = new
+                {
+                    id = "check/client",
+                    data = new
+                    {
+                        name = gebruikersNaam,
+                        password = wachtwoord
+                    }
+                };
+            }
+            catch(Exception exception)
+            {
+                Console.WriteLine(exception.StackTrace);
+            }
+
+            dynamic feedback = ReadMessage(client);
+            return feedback.data.ack;
         }
 
         public static IPAddress GetLocalIpAddress()
@@ -93,6 +113,24 @@ namespace IPR2Client
             byte[] bytes = Encoding.Unicode.GetBytes(message);
             client.GetStream().Write(bytes, 0, bytes.Length);
             client.GetStream().Flush();
+        }
+
+        public dynamic ReadMessage(TcpClient client)
+        {
+
+            byte[] buffer = new byte[128];
+            int totalRead = 0;
+
+            //read bytes until stream indicates there are no more
+            do
+            {
+                int read = client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
+                totalRead += read;
+                Console.WriteLine("ReadMessage: " + read);
+            } while (client.GetStream().DataAvailable);
+            string message = Encoding.Unicode.GetString(buffer, 0, totalRead);
+            Console.WriteLine(message);
+            return message;
         }
     }
 }
