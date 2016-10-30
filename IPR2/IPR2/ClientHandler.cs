@@ -12,17 +12,30 @@ namespace IPR2
     {
         public TcpClient Client { get; set; }
         private string _name;
+        private byte[] _messageBuffer;
+        public NetworkStream NetworkStream { get; set; }
 
         public ClientHandler(TcpClient client)
         {
             Client = client;
+            NetworkStream = Client.GetStream();
+            _messageBuffer = new byte[0];
         }
 
         public void HandleClientThread()
         {
+            byte[] buffer = new byte[1024];
             do
             {
-                dynamic message = JsonConvert.DeserializeObject(ReadMessage(Client));
+                var numberOfBytesRead = Client.GetStream().Read(buffer, 0, buffer.Length);
+                _messageBuffer = ConCat(_messageBuffer, buffer, numberOfBytesRead);
+
+                if(_messageBuffer.Length <= 4) continue;
+                var packetLegth = BitConverter.ToInt32(_messageBuffer, 0);
+
+                if(_messageBuffer.Length < packetLegth + 4) continue;
+                var resultMessage = GetMessageFromBuffer(_messageBuffer, packetLegth);
+                dynamic message = JsonConvert.DeserializeObject(resultMessage);
                 switch ((string) message.id)
                 {
                     case "check/client":
@@ -116,6 +129,7 @@ namespace IPR2
         {
 
             byte[] buffer = new byte[1024];
+
             int totalRead = 0;
 
             //read bytes until stream indicates there are no more
@@ -132,9 +146,51 @@ namespace IPR2
         {
             //make sure the other end decodes with the same format!
             message = JsonConvert.SerializeObject(message);
-            byte[] bytes = Encoding.Unicode.GetBytes(message);
-            client.GetStream().Write(bytes, 0, bytes.Length);
-            client.GetStream().Flush();
+            var buffer = Encoding.Default.GetBytes(message);
+            var bufferPrepend = BitConverter.GetBytes(buffer.length);
+
+            client.GetStream().Write(bufferPrepend, 0, bufferPrepend.Length);
+            client.GetStream().Write(buffer, 0, buffer.length);
+        }
+
+        private string GetMessageFromBuffer(byte[] array, int count)
+        {
+            var newArray = new byte[array.Length - (count + 4)];
+
+            var message = new StringBuilder();
+            message.AppendFormat("{0}", Encoding.ASCII.GetString(array, 4, count));
+
+            for (var i = 0; i < newArray.Length; i++)
+            {
+                newArray[i] = array[i + count + 4];
+            }
+
+            return message.ToString();
+        }
+
+        public byte[] ConCat(byte[] arrayOne, byte[] arrayTwo, int count)
+        {
+            var newArray = new byte[arrayOne.Length + count];
+            Buffer.BlockCopy(arrayOne, 0, newArray, 0, arrayOne.Length);
+            Buffer.BlockCopy(arrayTwo, 0, newArray, arrayOne.Length, count);
+            return newArray;
+        }
+
+        public byte[] SubArray(byte[] data, int index, int length)
+        {
+            var result = new byte[length];
+            Array.Copy(data, index, result, 0, length);
+            return result;
+        }
+
+        public byte[] NotConCat(byte[] array, int count)
+        {
+            var tempArray = new byte[array.Length - count];
+            for (var i = 0; i < array.Length - count; i++)
+            {
+                tempArray[i] = array[count + i];
+            }
+            return tempArray;
         }
 
         private void AddMeasurementToLog(dynamic variables)

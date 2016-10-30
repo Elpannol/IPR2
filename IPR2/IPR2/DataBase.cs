@@ -76,19 +76,19 @@ namespace IPR2
             return isClient;
         }
 
-        private string SetSavePath(string name)
+        private string SetFilePath()
         {
-            return @"..\..\PatientData\"+ name +".save";
+            return @"..\..\PatientData\clients.save";
         }
 
         public void SaveTraining(dynamic message)
         {
-
+            WriteToJsonFile<Client>(SetFilePath(), Clients);
         }
 
         public void LoadTraining(dynamic message)
         {
-            
+            ReadFromJson(SetFilePath());
         }
 
         private static void WriteToJsonFile<T>(string filePath, List<Client> clients, bool append = true)
