@@ -65,10 +65,10 @@ namespace IPR2
                     case "send/log":
                         SendMessage(SearchForName((string)message.data.name), new
                         {
-                            id = "log/send",
+                            id = "send/log",
                             data = new
                             {
-                                log = Server.DataBase.SearchForClient((string)message.data.name).Log._log
+                                log = Server.DataBase.SearchForClient((string)message.data.name).Log._log.ToArray()
                             }
                         });
                         break;
@@ -83,6 +83,11 @@ namespace IPR2
                         Server.DataBase.DeleteClient(_name);
                         ClientSepukku();
                         break;
+                    case "save/training":
+                        Server.DataBase.
+                        break;
+                    case "load/training":
+                        break;
                     default:
                         Console.WriteLine("You're not suppose to be here");
                         break;
@@ -90,8 +95,7 @@ namespace IPR2
             }
             while (Client.Connected);
         }
-
-        //TODO: both read and send message need to work with Json
+        
         public dynamic ReadMessage(TcpClient client)
         {
 

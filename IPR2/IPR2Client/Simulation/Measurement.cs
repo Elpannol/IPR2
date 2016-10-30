@@ -40,22 +40,6 @@ namespace IPR2Client.Simulation
             return 0;
         }
 
-        private dynamic GetMessageToSend()
-        {
-            dynamic toSend = new
-            {
-                id = "add/measurement",
-                data = new
-                {
-                    weerstand = Weerstand,
-                    hartslag = Hartslag,
-                    rondes = Rondes,
-                    time = Time
-                }
-            };
-            return toSend;
-        }
-
         public override string ToString()
         {
             return $"weerstand: {Weerstand} Watt, hartslag: {Hartslag} BPM, rondes: {Rondes} RPM, tijd: {Time.ToString()} Min";

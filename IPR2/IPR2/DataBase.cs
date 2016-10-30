@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace IPR2
 {
@@ -71,6 +74,75 @@ namespace IPR2
                 }
             }
             return isClient;
+        }
+
+        private string SetSavePath(string name)
+        {
+            return @"..\..\PatientData\"+ name +".save";
+        }
+
+        public void SaveTraining(dynamic message, string filePath)
+        {
+
+        }
+
+        public void LoadTraining(dynamic message)
+        {
+            
+        }
+
+        private static void WriteToJsonFile<T>(string filePath, List<Client> clients, bool append = true)
+        {
+            TextWriter writer = null;
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+                try
+                {
+                    var contentsToWriteToFile = JsonConvert.SerializeObject(clients);
+                    writer = new StreamWriter(filePath, append);
+                    writer.WriteLine(contentsToWriteToFile);
+                }
+                finally
+                {
+                    writer?.Close();
+                }
+            }
+            else
+            {
+                try
+                {
+                    var contentsToWriteToFile = JsonConvert.SerializeObject(clients);
+                    writer = new StreamWriter(filePath, append);
+                    writer.WriteLine(contentsToWriteToFile);
+                }
+                finally
+                {
+                    writer?.Close();
+                }
+            }
+        }
+
+        private void ReadFromJson(string filePath)
+        {
+            TextReader reader = null;
+            try
+            {
+                reader = new StreamReader(filePath);
+                var fileContent = reader.ReadToEnd();
+                var c = JsonConvert.DeserializeObject<List<Client>>(fileContent);
+                foreach (var toAdd in c)
+                {
+                    if (!Clients.Contains(toAdd))
+                    {
+                        Clients.AddRange(c);
+                    }
+                }
+            }
+            finally
+            {
+                reader?.Close();
+            }
         }
     }
 }
