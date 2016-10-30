@@ -24,18 +24,9 @@ namespace IPR2
 
         public void HandleClientThread()
         {
-            byte[] buffer = new byte[1024];
             do
             {
-                var numberOfBytesRead = Client.GetStream().Read(buffer, 0, buffer.Length);
-                _messageBuffer = ConCat(_messageBuffer, buffer, numberOfBytesRead);
-
-                if(_messageBuffer.Length <= 4) continue;
-                var packetLegth = BitConverter.ToInt32(_messageBuffer, 0);
-
-                if(_messageBuffer.Length < packetLegth + 4) continue;
-                var resultMessage = GetMessageFromBuffer(_messageBuffer, packetLegth);
-                dynamic message = JsonConvert.DeserializeObject(resultMessage);
+                dynamic message = JsonConvert.DeserializeObject(ReadMessage(Client));
                 switch ((string) message.id)
                 {
                     case "check/client":
@@ -127,19 +118,16 @@ namespace IPR2
 
         public dynamic ReadMessage(TcpClient client)
         {
-
             byte[] buffer = new byte[1024];
+            var numberOfBytesRead = Client.GetStream().Read(buffer, 0, buffer.Length);
+            _messageBuffer = ConCat(_messageBuffer, buffer, numberOfBytesRead);
 
-            int totalRead = 0;
+            if (_messageBuffer.Length <= 4) return null;
+            var packetLegth = BitConverter.ToInt32(_messageBuffer, 0);
 
-            //read bytes until stream indicates there are no more
-            do
-            {
-                int read = client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
-                totalRead += read;
-            } while (client.GetStream().DataAvailable);
-            string message = Encoding.Unicode.GetString(buffer, 0, totalRead);
-            return message;
+            if (_messageBuffer.Length < packetLegth + 4) return null;
+            var resultMessage = GetMessageFromBuffer(_messageBuffer, packetLegth);
+            return resultMessage;
         }
 
         public void SendMessage(TcpClient client, dynamic message)
