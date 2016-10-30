@@ -29,6 +29,7 @@ namespace IPR2
                         if (Server.DataBase.CheckClientLogin((string)message.data.name, (string)message.data.password))
                         {
                             SendAck(Client);
+                            _name = (string) message.data.name;
                             Console.WriteLine($"Client logged in: {message.data.name}, password: {message.data.password}");
                         }
                         else
@@ -79,8 +80,8 @@ namespace IPR2
                         }
                         break;
                     case "commit/sepukku":
-                            Server.DataBase.DeleteClient(_name);
-                            ClientSepukku();
+                        Server.DataBase.DeleteClient(_name);
+                        ClientSepukku();
                         break;
                     default:
                         Console.WriteLine("You're not suppose to be here");
