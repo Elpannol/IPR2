@@ -74,11 +74,9 @@ namespace IPR2Client
 
         private bool tryLogin(string gebruikersnaam, string wachtwoord)
         {
-            dynamic message;
-
             try
             {
-                message = new
+                dynamic message = new
                 {
                     id = "check/client",
                     data = new
@@ -87,13 +85,15 @@ namespace IPR2Client
                         password = wachtwoord
                     }
                 };
+                SendMessage(client, message);
+
             }
             catch(Exception exception)
             {
                 Console.WriteLine(exception.StackTrace);
             }
 
-            dynamic feedback = ReadMessage(client);
+            dynamic feedback = JsonConvert.DeserializeObject(ReadMessage(client));
             return feedback.data.ack;
         }
 
