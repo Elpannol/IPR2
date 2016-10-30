@@ -38,10 +38,18 @@ namespace IPR2
                     case "client/new":
                         MakeClient();
                         break;
+                    case "client/disconnect":
+                        Client.GetStream().Close();
+                        Client.Close();
+                        break;
+                    case "send/clients":
+                        SendPatients();
+                        break;
                     case "add/logentry":
                         Server.DataBase.SearchForClient(message.data.name).Log.AddLogEntry(message.data.text);
                         break;
                     case "add/measurement":
+                        AddMeasurementToLog(message);
                         break;
                     case "send/log":
                         SendMessage(SearchForName(message.data.name), new
@@ -107,7 +115,7 @@ namespace IPR2
         {
             //TODO: needs to work for measurements
             string text = variables;
-            Server.DataBase.SearchForClient(variables.data.name).Log.AddLogEntry(text);
+            Server.DataBase.SearchForClient(variables.data.measurement.ToString()).Log.AddLogEntry(text);
         }
 
         public void MakeClient()
@@ -187,6 +195,18 @@ namespace IPR2
                 data = new
                 {
                     ack = false
+                }
+            });
+        }
+
+        private void SendPatients()
+        {
+            SendMessage(Client, new
+            {
+                id = "patient/send",
+                data = new
+                {
+                    patients = Server.DataBase.Clients.ToArray()
                 }
             });
         }
