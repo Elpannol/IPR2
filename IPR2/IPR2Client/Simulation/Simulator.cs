@@ -13,9 +13,11 @@ namespace IPR2Client.Forms
         private int _time;
         private TcpClient client;
         private NewTest newTest;
+        private string _name;
 
-        public Simulator(TcpClient client, NewTest newTest)
+        public Simulator(TcpClient client, NewTest newTest, string name)
         {
+            _name = name;
             this.newTest = newTest;
             this.client = client;
             _time = 0;
@@ -117,7 +119,8 @@ namespace IPR2Client.Forms
                 id = "add/measurement",
                 data = new
                 {
-                    measurement = Measurement.ToString()
+                    measurement = Measurement.ToString(),
+                    name = _name
                 }
             };
 

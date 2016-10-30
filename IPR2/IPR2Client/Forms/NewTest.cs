@@ -16,13 +16,13 @@ namespace IPR2Client.Forms
     {
         private TcpClient client;
 
-        public NewTest(TcpClient client)
+        public NewTest(TcpClient client, string name)
         {
             this.client = client;
             InitializeComponent();
             FormClosing += NewTest_FormClosing;
 
-            Simulator simulator = new Simulator(client, this);
+            Simulator simulator = new Simulator(client, this, name);
             simulator.Visible = true;
         }
 

@@ -15,6 +15,7 @@ namespace IPR2Client.Forms
     public partial class Results : Form
     {
         private TcpClient client;
+        private string _gebruikersnaam;
 
         public Results(TcpClient client, string gebruikersnaam)
         {
@@ -22,6 +23,7 @@ namespace IPR2Client.Forms
             InitializeComponent();
             FormClosing += Results_FormClosing;
             loginLabel.Text = gebruikersnaam;
+            _gebruikersnaam = gebruikersnaam;
         }
 
         private void Results_FormClosing(object sender, FormClosingEventArgs e)
@@ -53,7 +55,7 @@ namespace IPR2Client.Forms
         private void newTestButton_Click(object sender, EventArgs e)
         {
             Visible = false;
-            NewTest newTest = new NewTest(client);
+            NewTest newTest = new NewTest(client, _gebruikersnaam);
             newTest.Visible = true;
         }
 
