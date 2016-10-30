@@ -26,7 +26,7 @@ namespace IPR2
                 switch ((string)message.id)
                 {
                     case "check/client":
-                        if (Server.DataBase.CheckClient(message.data.name, message.data.password))
+                        if (Server.DataBase.CheckClientLogin(message.data.name, message.data.password))
                         {
                             SendAck(Client);
                         }

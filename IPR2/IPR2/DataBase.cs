@@ -35,6 +35,18 @@ namespace IPR2
             return client;
         }
 
+        public bool CheckClient(string name)
+        {
+            bool isClient = false;
+            foreach (var c in Clients)
+            {
+                if (c.Name.Equals(name))
+                {
+                    isClient = true;
+                }
+            }
+            return isClient;
+        }
         public void DeleteClient(string name)
         {
             Client client = null;
@@ -48,7 +60,7 @@ namespace IPR2
             Clients.Remove(client);
         }
 
-        public bool CheckClient(string name, string password)
+        public bool CheckClientLogin(string name, string password)
         {
             bool isClient = false;
             foreach (var c in Clients)
