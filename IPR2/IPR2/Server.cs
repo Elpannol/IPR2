@@ -72,7 +72,7 @@ namespace IPR2
             Console.WriteLine("Genocide is an option");
             foreach (var c in Handlers)
             {
-                if(c.Client.Connected) continue;
+                if(!c.Client.Connected) continue;
                 c.Client.GetStream().Close();
                 c.Client.Close();
             }
