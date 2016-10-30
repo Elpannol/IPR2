@@ -25,8 +25,27 @@ namespace IPR2Client.Forms
 
         private void Results_FormClosing(object sender, FormClosingEventArgs e)
         {
-            client.GetStream().Close();
-            client.Close();
+            try
+            {
+                dynamic message = new
+                {
+                    id = "client/disconnect",
+                    data = new
+                    {
+
+                    }
+                };
+
+                SendMessage(client, message);
+
+
+                client.GetStream().Close();
+                client.Close();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.StackTrace);
+            }
             Application.Exit();
         }
 
@@ -35,8 +54,6 @@ namespace IPR2Client.Forms
             Visible = false;
             NewTest newTest = new NewTest(client);
             newTest.Visible = true;
-            Simulator simulator = new Simulator(client);
-            simulator.Visible = true;
         }
 
         public void SendMessage(TcpClient client, dynamic message)

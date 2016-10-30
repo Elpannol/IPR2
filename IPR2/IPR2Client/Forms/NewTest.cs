@@ -21,22 +21,43 @@ namespace IPR2Client.Forms
             this.client = client;
             InitializeComponent();
             FormClosing += NewTest_FormClosing;
-            update();
+
+            Simulator simulator = new Simulator(client, this);
+            simulator.Visible = true;
         }
 
         private void NewTest_FormClosing(object sender, FormClosingEventArgs e)
         {
-            client.GetStream().Close();
-            client.Close();
+            try
+            {
+                dynamic message = new
+                {
+                    id = "client/disconnect",
+                    data = new
+                    {
+
+                    }
+                };
+
+                SendMessage(client, message);
+
+
+                client.GetStream().Close();
+                client.Close();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.StackTrace);
+            }
             Application.Exit();
         }
 
-        private void update()
+        public void update(string weerstand, string hartslag, string rondes, string tijd)
         {
-            weerstandLabel.Text = "50"      + " Watt";
-            hartslagLabel.Text  = "120"     + " BPM";
-            rondesLabel.Text    = "100"     + " RPM";
-            tijdLabel.Text      = "01:30"   + " Minuten";
+            weerstandLabel.Text = weerstand    + " Watt";
+            hartslagLabel.Text  = hartslag     + " BPM";
+            rondesLabel.Text    = rondes       + " RPM";
+            tijdLabel.Text      = tijd         + " Minuten";
         }
 
         public void SendMessage(TcpClient client, dynamic message)

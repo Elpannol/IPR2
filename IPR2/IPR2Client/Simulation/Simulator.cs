@@ -12,9 +12,11 @@ namespace IPR2Client.Forms
         private readonly Measurement Measurement;
         private int _time;
         private TcpClient client;
+        private NewTest newTest;
 
-        public Simulator(TcpClient client)
+        public Simulator(TcpClient client, NewTest newTest)
         {
+            this.newTest = newTest;
             this.client = client;
             _time = 0;
             SimpleTime temp = new SimpleTime(_time / 60, _time % 60);
@@ -34,8 +36,26 @@ namespace IPR2Client.Forms
 
         private void Simulator_FormClosing(object sender, FormClosingEventArgs e)
         {
-            client.GetStream().Close();
-            client.Close();
+            try
+            {
+                dynamic message = new
+                {
+                    id = "client/disconnect",
+                    data = new
+                    {
+
+                    }
+                };
+
+                SendMessage(client, message);
+
+                client.GetStream().Close();
+                client.Close();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.StackTrace);
+            }
             Application.Exit();
         }
 
@@ -44,6 +64,7 @@ namespace IPR2Client.Forms
             if (Measurement.Weerstand > 4)
                 Measurement.Weerstand -= 5;
             weerstand.Text = Measurement.Weerstand + "";
+            
         }
 
         private void weerstandPlus_Click(object sender, EventArgs e)
@@ -89,6 +110,7 @@ namespace IPR2Client.Forms
                 Measurement.Time = new SimpleTime(_time / 60, _time % 60);
             }
             tijd.Text = Measurement.Time.ToString();
+            newTest.update(weerstand.Text, hartslag.Text, rondes.Text, tijd.Text);
         }
 
         public void SendMessage(TcpClient client, dynamic message)
