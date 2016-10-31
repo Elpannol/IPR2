@@ -42,6 +42,7 @@
             this.tijdLabel = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.loginLabel = new System.Windows.Forms.Label();
+            this.comportBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.timeTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -64,7 +65,7 @@
             this.trainingListBox.ItemHeight = 24;
             this.trainingListBox.Location = new System.Drawing.Point(12, 74);
             this.trainingListBox.Name = "trainingListBox";
-            this.trainingListBox.Size = new System.Drawing.Size(176, 172);
+            this.trainingListBox.Size = new System.Drawing.Size(176, 148);
             this.trainingListBox.TabIndex = 1;
             this.trainingListBox.SelectedIndexChanged += new System.EventHandler(this.trainingListBox_SelectedIndexChanged);
             // 
@@ -167,11 +168,20 @@
             this.loginLabel.TabIndex = 12;
             this.loginLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // comportBox
+            // 
+            this.comportBox.FormattingEnabled = true;
+            this.comportBox.Location = new System.Drawing.Point(12, 228);
+            this.comportBox.Name = "comportBox";
+            this.comportBox.Size = new System.Drawing.Size(175, 24);
+            this.comportBox.TabIndex = 13;
+            // 
             // Results
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(704, 262);
+            this.Controls.Add(this.comportBox);
             this.Controls.Add(this.loginLabel);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.tijdLabel);
@@ -213,5 +223,6 @@
         private System.Windows.Forms.Label tijdLabel;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label loginLabel;
+        private System.Windows.Forms.ComboBox comportBox;
     }
 }

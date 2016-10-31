@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO.Ports;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -19,6 +20,8 @@ namespace IPR2Client.Forms
         private List<Training> trainingen;
         private Training currentTraining;
         private Measurement currentMeasurement;
+        public string[] PortStrings { get; }
+        private NewTest newTest;
 
         public Results(string gebruikersnaam)
         {
@@ -27,6 +30,11 @@ namespace IPR2Client.Forms
             loginLabel.Text = gebruikersnaam;
             _gebruikersnaam = gebruikersnaam;
             trainingen = new List<Training>();
+
+            PortStrings = SerialPort.GetPortNames();
+            foreach (var port in PortStrings)
+                comportBox.Items.Add(port);
+            comportBox.Items.Add("Simulation");
         }
 
         private void Results_FormClosing(object sender, FormClosingEventArgs e)
@@ -39,7 +47,18 @@ namespace IPR2Client.Forms
         {
             Visible = false;
             Login.Handler.StartTraining();
-            NewTest newTest = new NewTest(_gebruikersnaam, this);
+
+            if (comportBox.SelectedItem?.ToString() == "Simulation" || comportBox.SelectedItem?.ToString() == null)
+            {
+                newTest = new NewTest(_gebruikersnaam, this);
+            }
+            else if (comportBox.SelectedItem != null)
+            {
+                var serialPort = new SerialPort(comportBox.SelectedItem.ToString());
+                serialPort.Open();
+
+                newTest = new NewTest(_gebruikersnaam, this, serialPort, AddTraining);
+            }
             newTest.Visible = true;
         }
 
@@ -91,6 +110,5 @@ namespace IPR2Client.Forms
                 Console.WriteLine(exception.StackTrace);
             }
         }
-
     }
 }

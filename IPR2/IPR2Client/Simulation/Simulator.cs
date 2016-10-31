@@ -16,7 +16,6 @@ namespace IPR2Client.Forms
         private string _name;
         private Results results;
         private Timer timer1;
-        private List<Measurement> measurements = new List<Measurement>();
 
         public Simulator(NewTest newTest, string name, Results results)
         {
@@ -50,7 +49,7 @@ namespace IPR2Client.Forms
         public void stop()
         {
             timer1.Stop();
-            Training training = new Training(measurements, _name);
+            Training training = new Training(newTest.measurements, _name);
             results.AddTraining(training);
         }
 
@@ -109,7 +108,7 @@ namespace IPR2Client.Forms
 
             Login.Handler.AddLogEntry(Measurement.ToString(), _name);
             Login.Handler.ReadMessage();
-            measurements.Add(new Measurement(Measurement.Weerstand, Measurement.Hartslag, Measurement.Rondes, Measurement.Time));
+            newTest.measurements.Add(new Measurement(Measurement.Weerstand, Measurement.Hartslag, Measurement.Rondes, Measurement.Time));
             Login.Handler.AddMeasurement(Measurement, _name);
             Login.Handler.ReadMessage();
         }
