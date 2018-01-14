@@ -1,15 +1,7 @@
 ﻿using IPR2Client.Simulation;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO.Ports;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IPR2Client.Forms
@@ -32,19 +24,18 @@ namespace IPR2Client.Forms
             trainingen = new List<Training>();
 
             PortStrings = SerialPort.GetPortNames();
-            foreach (var port in PortStrings)
+            foreach (var port in PortStrings) {
                 comportBox.Items.Add(port);
+            }
             comportBox.Items.Add("Simulation");
         }
 
-        private void Results_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void Results_FormClosing(object sender, FormClosingEventArgs e) {
             Login.Handler.Disconnect();
             Application.Exit();
         }
 
-        private void newTestButton_Click(object sender, EventArgs e)
-        {
+        private void newTestButton_Click(object sender, EventArgs e) {
             Visible = false;
             Login.Handler.StartTraining();
 
@@ -78,15 +69,17 @@ namespace IPR2Client.Forms
         
         public void AddTraining(Training training)
         {
-                trainingen.Add(training);
-                refresh();
+            trainingen.Add(training);
+            refresh();
         }
 
         public void refresh()
         {
-            try { trainingListBox.Items.Clear(); }
-            catch (Exception exception) { Console.WriteLine(exception.StackTrace); }
-
+            try {
+                trainingListBox.Items.Clear();
+            } catch (Exception exception) {
+                Console.WriteLine(exception.StackTrace);
+            }
             //trainingen = Login.Handler.GetTrainingen(_gebruikersnaam);
 
             for(int i = 0; i<trainingen.Count; i++)
@@ -105,9 +98,10 @@ namespace IPR2Client.Forms
                 rondesLabel.Text = "" + currentMeasurement.Rondes;
                 tijdLabel.Text = currentMeasurement.Time.ToString();
             }
-            catch (Exception exception)
+            catch (NullReferenceException exception)
             {
-                Console.WriteLine(exception.StackTrace);
+                Console.WriteLine("Stupid slider exception!");
+                //Console.WriteLine(exception.StackTrace);
             }
         }
     }

@@ -77,8 +77,6 @@ namespace IPR2
                 c.Client.Close();
             }
             Handlers.Clear();
-
-
         }
     }
 }

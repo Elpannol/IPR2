@@ -1,15 +1,7 @@
 ﻿using IPR2Client.Simulation;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO.Ports;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IPR2Client.Forms
@@ -18,8 +10,10 @@ namespace IPR2Client.Forms
 
     public partial class NewTest : Form
     {
-        private string _name;
         private Simulator simulator;
+        private bool isSimulating = false;
+
+        private string _name;
         private Results results;
         private SerialPort serialPort;
         private Timer timer1;
@@ -31,10 +25,13 @@ namespace IPR2Client.Forms
             this.results = results;
             InitializeComponent();
             FormClosing += NewTest_FormClosing;
-            simulator = new Simulator(this, name, results);
-            simulator.Visible = true;
-            _name = name;
 
+            // Set the simulator and it's flag
+            simulator = new Simulator(this, name, results);
+            isSimulating = true;
+            simulator.Visible = true;
+
+            _name = name;
             measurements = new List<Measurement>();
         }
 
@@ -56,6 +53,10 @@ namespace IPR2Client.Forms
             timer1.Start();
         }
 
+        /**
+         * During a test this function is called every 1000 ms. (so, this
+         * is the from where the logic for the test should be implemented).
+         */
         private void React(object sender, EventArgs e)
         {
             try
@@ -96,14 +97,20 @@ namespace IPR2Client.Forms
             this.Dispose();
         }
 
+        /**
+         * Update the from's text fields.
+         */
         public void update(string weerstand, string hartslag, string rondes, string tijd)
         {
-            weerstandLabel.Text = weerstand    + " Watt";
-            hartslagLabel.Text  = hartslag     + " BPM";
-            rondesLabel.Text    = rondes       + " RPM";
-            tijdLabel.Text      = tijd         + " Minuten";
+            weerstandLabel.Text = $"{weerstand} Watt";
+            hartslagLabel.Text  = $"{hartslag} BPM";
+            rondesLabel.Text    = $"{rondes} RPM";
+            tijdLabel.Text      = $"{tijd} Minuten";
         }
-
+   
+        /**
+         * Functions which send and receive commands from and to the bike.
+         */
         public static void SendCommand(string command, SerialPort serialPort)
         {
             if ((serialPort != null) && serialPort.IsOpen)
@@ -111,7 +118,6 @@ namespace IPR2Client.Forms
             else
                 Console.WriteLine("Failed to send command");
         }
-
         public static string ReceiveCommand(SerialPort serialPort)
         {
             if ((serialPort != null) && serialPort.IsOpen)
@@ -119,12 +125,16 @@ namespace IPR2Client.Forms
             return null;
         }
 
+        /**
+         * This function creates a measurement from a string.
+         * AND it sends the measurment to the server.
+         */
         public  Measurement ParseMeasurement(string inputString)
         {
+            // Some string parsing
             inputString = inputString.Trim();
             var splitString = inputString.Split();
             var simpleTimeString = splitString[6].Split(':');
-
             splitString[6] = "0";
             int[] list = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             var index = 0;
@@ -134,15 +144,34 @@ namespace IPR2Client.Forms
                 index++;
             }
 
-            var tempTime = new SimpleTime(int.Parse(simpleTimeString[0]), int.Parse(simpleTimeString[1]));
-            var tempMeasurement = new Measurement(list[2]/10, list[0], list[1],tempTime.Minutes, tempTime.Seconds);
+            // Create a measurement
+            var tempTime = new SimpleTime(
+                int.Parse(simpleTimeString[0]),
+                int.Parse(simpleTimeString[1]));
+            var tempMeasurement = new Measurement(list[2]/10,
+                list[0],
+                list[1],
+                tempTime.Minutes,
+                tempTime.Seconds);
+
+            // This is where data is sent to the server.
             Login.Handler.AddMeasurement(tempMeasurement, _name);
             Login.Handler.ReadMessage();
-            Login.Handler.AddLogEntry(tempMeasurement.ToString(),_name);
+            Login.Handler.AddLogEntry(tempMeasurement.ToString(), _name);
             Login.Handler.ReadMessage();
-            update(tempMeasurement.Weerstand.ToString(), tempMeasurement.Hartslag.ToString(), tempMeasurement.Rondes.ToString(), tempMeasurement.Time.ToString());
+
+            // Update simply changes the text fields.
+            update(tempMeasurement.Weerstand.ToString(),
+                tempMeasurement.Hartslag.ToString(),
+                tempMeasurement.Rondes.ToString(),
+                tempMeasurement.Time.ToString());
 
             return tempMeasurement;
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
