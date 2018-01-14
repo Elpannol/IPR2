@@ -68,7 +68,7 @@ namespace IPR2Client.Forms
             {
                 //Changed the write and read line to send and receive command
                 Console.WriteLine("Sending");
-                this.connection.SendCommand("ST\n\r");
+                this.connection.StartBicycle();
 
                 Console.WriteLine("Reading...");
                 var temp = this.connection.ReceiveCommand();

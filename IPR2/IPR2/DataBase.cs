@@ -1,5 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace IPR2
@@ -13,7 +19,7 @@ namespace IPR2
             Clients =  new List<Client>();
         }
 
-        public void AddClient(Client client)
+        public  void AddClient(Client client)
         {
             Clients.Add(client);
         }
@@ -117,7 +123,7 @@ namespace IPR2
             }
         }
 
-        public List<Client> GiveAllDoctors()
+        public List<Client> GetAllDoctors()
         {
             List<Client> doctors = new List<Client>();
             foreach (var c in Clients)
@@ -130,7 +136,7 @@ namespace IPR2
             return doctors;
         }
 
-        public List<Client> GiveAllPatients()
+        public List<Client> GetAllPatients()
         {
             List<Client> patients = new List<Client>();
             foreach (var c in Clients)

@@ -75,6 +75,7 @@
       <DependentUpon>Results.cs</DependentUpon>
     </Compile>
     <Compile Include="Handler.cs" />
+    <Compile Include="TrainingState.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Simulation\Measurement.cs" />
     <Compile Include="Simulation\Simulator.cs">

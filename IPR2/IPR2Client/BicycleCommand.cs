@@ -28,13 +28,43 @@ namespace IPR2Client
             };
             this.isSimulating = true;
         }
+
+        public void StartBicycle()
+        {
+            SendCommand("ST");
+        }
+
+        public void ResetBicycle()
+        {
+            SendCommand("RS");
+        }
+
+        public void EnableCommand()
+        {
+            SendCommand("CM");
+        }
+
+        public void ChangePower(string watt)
+        {
+            SendCommand($"PW {watt}");
+        }
+
+        public void ChangeTime(string time)
+        {
+            SendCommand($"PT {time}");
+        }
+
+        public void ChangeDistance(string distance)
+        {
+            SendCommand($"PD {distance}");
+        }
  
         public void SendCommand(string command) {
             if (this.isSimulating) {
                 // TODO: communication with simulator
             } else {
                 if ((serialPort != null) && serialPort.IsOpen)
-                    serialPort.WriteLine(command);
+                    serialPort.WriteLine(command + "\n\r");
                 else
                     throw new Exception("The serial port is not properly initialised!");
             }
