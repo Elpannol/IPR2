@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BicycleCommand.cs" />
     <Compile Include="Forms\Doctor.cs">
       <SubType>Form</SubType>
     </Compile>

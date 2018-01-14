@@ -41,7 +41,7 @@ namespace IPR2Client.Forms
 
             if (comportBox.SelectedItem?.ToString() == "Simulation" || comportBox.SelectedItem?.ToString() == null)
             {
-                newTest = new NewTest(_gebruikersnaam, this);
+                newTest = new NewTest(_gebruikersnaam, this, AddTraining);
             }
             else if (comportBox.SelectedItem != null)
             {

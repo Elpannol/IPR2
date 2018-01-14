@@ -40,6 +40,21 @@ namespace IPR2Client.Simulation
             return 0;
         }
 
+        public string ToRawData() {
+            // pulse rpm speed*10 distance requested_power energy mm:ss actual_power
+            string raw = "";
+            raw += Hartslag + " ";
+            raw += Rondes + " ";
+            raw += (Rondes * 10) + " "; // Speed
+            raw += "213" + " "; // Distance is irrelevant
+            raw += Weerstand + " "; // Not sure about this one...
+            raw += "787" + " "; // energy
+            raw += $"{Time.Minutes}:{Time.Seconds}" + " "; // Time
+            raw += "249724" + " "; // Actual power
+
+            return raw;
+        }
+
         public override string ToString()
         {
             return $"weerstand: {Weerstand} Watt, hartslag: {Hartslag} BPM, rondes: {Rondes} RPM, tijd: {Time.ToString()} Min";

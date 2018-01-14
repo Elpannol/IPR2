@@ -10,29 +10,24 @@ namespace IPR2Client.Forms
 
     public partial class NewTest : Form
     {
-        private Simulator simulator;
-        private bool isSimulating = false;
+        private BicycleConnection connection;
 
         private string _name;
         private Results results;
-        private SerialPort serialPort;
         private Timer timer1;
-        private readonly AddTraining _addTraining;
+        private AddTraining _addTraining;
         public List<Measurement> measurements;
 
-        public NewTest(string name, Results results)
+        public NewTest(string name, Results results, AddTraining addTraining)
         {
             this.results = results;
             InitializeComponent();
             FormClosing += NewTest_FormClosing;
 
-            // Set the simulator and it's flag
-            simulator = new Simulator(this, name, results);
-            isSimulating = true;
-            simulator.Visible = true;
-
-            _name = name;
-            measurements = new List<Measurement>();
+            // Create a connection to the bike using the simulator.
+            this.connection = new BicycleConnection(name);
+            // Initialise the rest of the attributes and start the timer
+            this.Initialise(name, addTraining);
         }
 
         public NewTest(string name, Results results, SerialPort serialPort, AddTraining addTraining)
@@ -40,13 +35,23 @@ namespace IPR2Client.Forms
             this.results = results;
             InitializeComponent();
             FormClosing += NewTest_FormClosing;
-            this.serialPort = serialPort;
-            _name = name;
 
+            // Create a connection to the real bike using the port.
+            this.connection = new BicycleConnection(serialPort);
+            // Initialise the rest of the attributes and start the timer
+            this.Initialise(name, addTraining);
+        }
+
+        /**
+         * Initialise attribues used by both constructors.
+         */
+        private void Initialise(string name, AddTraining addTraining) {
+            // Some needed attributes
             measurements = new List<Measurement>();
-
+            _name = name;
             _addTraining = addTraining;
 
+            // Start the timer
             timer1 = new Timer();
             timer1.Tick += new EventHandler(React);
             timer1.Interval = 1000;
@@ -63,10 +68,10 @@ namespace IPR2Client.Forms
             {
                 //Changed the write and read line to send and receive command
                 Console.WriteLine("Sending");
-                SendCommand("ST\n\r", serialPort);
+                this.connection.SendCommand("ST\n\r");
 
                 Console.WriteLine("Reading...");
-                var temp = ReceiveCommand(serialPort);
+                var temp = this.connection.ReceiveCommand();
 
                 measurements.Add(ParseMeasurement(temp));
             }
@@ -81,11 +86,7 @@ namespace IPR2Client.Forms
             results.refresh();
             results.Visible = true;
 
-            if(simulator != null)
-            {
-                simulator.stop();
-                simulator.Dispose();
-            }
+            this.connection.Close();
 
             if(timer1 != null)
             {
@@ -107,29 +108,12 @@ namespace IPR2Client.Forms
             rondesLabel.Text    = $"{rondes} RPM";
             tijdLabel.Text      = $"{tijd} Minuten";
         }
-   
-        /**
-         * Functions which send and receive commands from and to the bike.
-         */
-        public static void SendCommand(string command, SerialPort serialPort)
-        {
-            if ((serialPort != null) && serialPort.IsOpen)
-                serialPort.WriteLine(command);
-            else
-                Console.WriteLine("Failed to send command");
-        }
-        public static string ReceiveCommand(SerialPort serialPort)
-        {
-            if ((serialPort != null) && serialPort.IsOpen)
-                return serialPort.ReadLine();
-            return null;
-        }
 
         /**
          * This function creates a measurement from a string.
          * AND it sends the measurment to the server.
          */
-        public  Measurement ParseMeasurement(string inputString)
+        public Measurement ParseMeasurement(string inputString)
         {
             // Some string parsing
             inputString = inputString.Trim();

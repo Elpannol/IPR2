@@ -12,16 +12,11 @@ namespace IPR2Client.Forms
     {
         private readonly Measurement Measurement;
         private int _time;
-        private NewTest newTest;
         private string _name;
-        private Results results;
-        private Timer timer1;
 
-        public Simulator(NewTest newTest, string name, Results results)
+        public Simulator(string name)
         {
-            this.results = results;
             _name = name;
-            this.newTest = newTest;
             _time = 0;
             SimpleTime temp = new SimpleTime(_time / 60, _time % 60);
             Measurement = new Measurement(20, 100, 50, temp.Minutes, temp.Seconds);
@@ -31,26 +26,11 @@ namespace IPR2Client.Forms
             weerstand.Text = Measurement.Weerstand + "";
             hartslag.Text = Measurement.Hartslag + "";
             rondes.Text = Measurement.Rondes + "";
-
-            timer1 = new Timer();
-            timer1.Tick += new EventHandler(UpdateSim);
-            timer1.Interval = 1000;
-            timer1.Start();
         }
 
         private void Simulator_FormClosing(object sender, FormClosingEventArgs e)
         {
-            results.Visible = true;
-            newTest.Dispose();
-            stop();
             this.Dispose();
-        }
-
-        public void stop()
-        {
-            timer1.Stop();
-            Training training = new Training(newTest.measurements, _name);
-            results.AddTraining(training);
         }
 
         private void weerstandMin_Click(object sender, EventArgs e)
@@ -58,7 +38,6 @@ namespace IPR2Client.Forms
             if (Measurement.Weerstand > 4)
                 Measurement.Weerstand -= 5;
             weerstand.Text = Measurement.Weerstand + "";
-            
         }
 
         private void weerstandPlus_Click(object sender, EventArgs e)
@@ -96,7 +75,17 @@ namespace IPR2Client.Forms
             rondes.Text = Measurement.Rondes + "";
         }
 
-        public void UpdateSim(object sender, EventArgs e)
+        public string ReadLine() {
+            Measurement measurement = this.UpdateSim();
+
+            return measurement.ToRawData();
+        }
+
+        public void Write(string command) {
+            // TODO: Handle commands (is this even usefull?)
+        }
+
+        public Measurement UpdateSim()
         {
             if (_time < 5999)
             {
@@ -104,13 +93,15 @@ namespace IPR2Client.Forms
                 Measurement.Time = new SimpleTime(_time / 60, _time % 60);
             }
             tijd.Text = Measurement.Time.ToString();
-            newTest.update(weerstand.Text, hartslag.Text, rondes.Text, tijd.Text);
 
-            Login.Handler.AddLogEntry(Measurement.ToString(), _name);
-            Login.Handler.ReadMessage();
-            newTest.measurements.Add(new Measurement(Measurement.Weerstand, Measurement.Hartslag, Measurement.Rondes, Measurement.Time));
-            Login.Handler.AddMeasurement(Measurement, _name);
-            Login.Handler.ReadMessage();
+            Measurement measurement = new Measurement(
+                Measurement.Weerstand,
+                Measurement.Hartslag,
+                Measurement.Rondes,
+                Measurement.Time
+            );
+
+            return measurement;
         }
     }
 }
