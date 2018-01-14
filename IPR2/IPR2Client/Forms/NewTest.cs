@@ -62,10 +62,10 @@ namespace IPR2Client.Forms
             {
                 //Changed the write and read line to send and receive command
                 Console.WriteLine("Sending");
-                SendCommand("ST\n\r", serialPort);
+                BicycleCommand.SendCommand("ST\n\r", serialPort);
 
                 Console.WriteLine("Reading...");
-                var temp = ReceiveCommand(serialPort);
+                var temp = BicycleCommand.ReceiveCommand(serialPort);
 
                 measurements.Add(ParseMeasurement(temp));
             }
@@ -104,22 +104,7 @@ namespace IPR2Client.Forms
             tijdLabel.Text      = tijd         + " Minuten";
         }
 
-        public static void SendCommand(string command, SerialPort serialPort)
-        {
-            if ((serialPort != null) && serialPort.IsOpen)
-                serialPort.WriteLine(command);
-            else
-                Console.WriteLine("Failed to send command");
-        }
-
-        public static string ReceiveCommand(SerialPort serialPort)
-        {
-            if ((serialPort != null) && serialPort.IsOpen)
-                return serialPort.ReadLine();
-            return null;
-        }
-
-        public  Measurement ParseMeasurement(string inputString)
+        public Measurement ParseMeasurement(string inputString)
         {
             inputString = inputString.Trim();
             var splitString = inputString.Split();
