@@ -60,7 +60,7 @@ namespace IPR2Client
         }
  
         public void SendCommand(string command) {
-            if (this.isSimulating) {
+            if (isSimulating) {
                 // TODO: communication with simulator
             } else {
                 if ((serialPort != null) && serialPort.IsOpen)
@@ -71,8 +71,8 @@ namespace IPR2Client
         }
 
         public string ReceiveCommand() {
-            if (this.isSimulating) {
-                return this.simulator.ReadLine();
+            if (isSimulating) {
+                return simulator.ReadLine();
             } else {
                 if ((serialPort != null) && serialPort.IsOpen)
                     return serialPort.ReadLine();

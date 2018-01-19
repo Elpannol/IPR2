@@ -17,12 +17,14 @@ namespace IPR2Client.Forms
         private Timer timer1;
         private AddTraining _addTraining;
         public List<Measurement> measurements;
+        public int _age;
 
         public NewTest(string name, Results results, AddTraining addTraining)
         {
             this.results = results;
             InitializeComponent();
             FormClosing += NewTest_FormClosing;
+            _age = Login.Handler.GetAge(name);
 
             // Create a connection to the bike using the simulator.
             this.connection = new BicycleConnection(name);
@@ -68,10 +70,10 @@ namespace IPR2Client.Forms
             {
                 //Changed the write and read line to send and receive command
                 Console.WriteLine("Sending");
-                this.connection.StartBicycle();
+                connection.StartBicycle();
 
                 Console.WriteLine("Reading...");
-                var temp = this.connection.ReceiveCommand();
+                var temp = connection.ReceiveCommand();
 
                 measurements.Add(ParseMeasurement(temp));
             }
@@ -86,7 +88,7 @@ namespace IPR2Client.Forms
             results.refresh();
             results.Visible = true;
 
-            this.connection.Close();
+            connection.Close();
 
             if(timer1 != null)
             {
@@ -95,7 +97,7 @@ namespace IPR2Client.Forms
                 results.AddTraining(training);
             }
 
-            this.Dispose();
+            Dispose();
         }
 
         /**
@@ -132,7 +134,7 @@ namespace IPR2Client.Forms
             var tempTime = new SimpleTime(
                 int.Parse(simpleTimeString[0]),
                 int.Parse(simpleTimeString[1]));
-            var tempMeasurement = new Measurement(list[2]/10,
+            var tempMeasurement = new Measurement(list[7],
                 list[0],
                 list[1],
                 tempTime.Minutes,

@@ -8,8 +8,11 @@ namespace IPR2Client.Simulation
 {
     public class Training
     {
-        public readonly List<Measurement> _measurements;
+        public List<Measurement> _measurements { get; set; }
         public readonly string _name;
+
+        public int maxPower;
+        public int maxPulse;
 
         public Training(List<Measurement> measurements, string name)
         {

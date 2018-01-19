@@ -25,17 +25,12 @@ namespace IPR2
                 dynamic message = JsonConvert.DeserializeObject(ReadMessage(Client));
                 switch ((string) message.id)
                 {
-                    case "create/client":
-                        Server.DataBase.AddClient(new Client((string)message.data.name, (string)message.data.password,
-                            (bool)message.data.isDoctor));
-                        _name = message.data.name;
-                        break;
                     case "check/client":
                         Console.WriteLine("Checking client");
                         if (Server.DataBase.CheckClientLogin((string) message.data.name, (string) message.data.password))
                         {
                             Console.WriteLine("good client");
-                            SendAck(Client);
+                            SendAck();
                             _name = (string) message.data.name;
                             Console.WriteLine(
                                 $"Client logged in: {message.data.name}");
@@ -43,33 +38,44 @@ namespace IPR2
                         else
                         {
                             Console.WriteLine("bad client");
-                            SendNotAck(Client);
+                            SendNotAck();
                             Console.WriteLine("Client doesn't exists");
                         }
                         break;
                     case "check/doctor":
                         if (Server.DataBase.SearchForClient((string) message.data.name).IsDoctor)
                         {
-                            SendAck(Client);
+                            SendAck();
                         }
                         else
                         {
-                            SendNotAck(Client);
+                            SendNotAck();
                         }
                         break;
                     case "client/new":
                         MakeClient();
                         break;
+                    case "get/age":
+                        string name = message.data.name;
+                        Client client = Server.DataBase.SearchForClient(name);
+                        SendMessage(
+                            new
+                            {
+                                id = "recieve/age",
+                                data = new
+                                {
+                                    age = (int)client._age
+                                }
+                            });
+                        break;
                     case "start/training":
                         Server.DataBase.SearchForClient(_name).AddTraining();
-                        break;
-                         
+                        break;                         
                     case "client/disconnect":
                         try
                         {
                             Console.WriteLine($"{_name} disconnected");
-                            Client.GetStream().Close();
-                            Client.Close();
+                            ClientSepukku();
                         }
                         catch (Exception e)
                         {
@@ -82,14 +88,14 @@ namespace IPR2
                     case "add/logentry":
                         Server.DataBase.SearchForClient((string) message.data.name)
                             .Log.AddLogEntry((string) message.data.text);
-                        SendAck(Client);
+                        SendAck();
                         break;
                     case "add/measurement":
                         AddMeasurementToLog(message);
-                        SendAck(Client);
+                        SendAck();
                         break;
                     case "send/log":
-                        SendMessage(SearchForName((string) message.data.name), new
+                        SendMessage(new
                         {
                             id = "send/log",
                             data = new
@@ -97,6 +103,18 @@ namespace IPR2
                                 log = Server.DataBase.SearchForClient((string) message.data.name).Log._log.ToArray()
                             }
                         });
+                        break;
+                    case "send/traininglog":
+                        Training training = Server.DataBase.SearchForClient((string)message.data.name).getTraining((string)message.data.training);
+
+                        SendMessage(new {
+                                data = new
+                                {
+                                    log = training._measurements.Select(m => m.ToRawData()).ToArray()
+                                }
+                            }
+                        );
+
                         break;
                     case "kill/client":
                         if (Server.DataBase.SearchForClient(_name).IsDoctor)
@@ -109,11 +127,15 @@ namespace IPR2
                         Server.DataBase.DeleteClient(_name);
                         ClientSepukku();
                         break;
-                    case "save/training":
-                        Server.DataBase.SaveTraining(message);
+                    case "load/user":
+                        SendPatients();
                         break;
-                    case "load/training":
-                        Server.DataBase.LoadTraining(message);
+                    case "get/trainings":
+                        Client trainingclient = Server.DataBase.SearchForClient((string)message.data.name);
+                        SendMessage(new
+                        {
+                            training = trainingclient.Traingingen.Select(t => t._name).ToArray()
+                        });
                         break;
                     default:
                         Console.WriteLine("You're not suppose to be here");
@@ -137,12 +159,12 @@ namespace IPR2
 
         }
 
-        public void SendMessage(TcpClient client, dynamic message)
+        public void SendMessage(dynamic message)
         {
             //make sure the other end decodes with the same format!
             message = JsonConvert.SerializeObject(message);
             byte[] bytes = Encoding.Unicode.GetBytes(message);
-            client.GetStream().Write(bytes, 0, bytes.Length);
+            Client.GetStream().Write(bytes, 0, bytes.Length);
             Client.GetStream().Flush();
 
         }
@@ -169,7 +191,7 @@ namespace IPR2
 
         public void MakeClient()
         {
-            SendMessage(Client,
+            SendMessage(
             new
             {
                 id = "make/client",
@@ -187,7 +209,7 @@ namespace IPR2
             {
                 if (!c._name.Equals(id)) continue;
 
-                c.SendMessage(c.Client, new
+                c.SendMessage(new
                 {
                     id = "client/close",
                     data = new
@@ -207,12 +229,8 @@ namespace IPR2
         private void ClientSepukku()
         {
             //When you dishonor the family
-            foreach (var c in Server.Handlers)
-            {
-                if (!c._name.Equals(_name) || !c.Client.Connected) continue;
-                c.Client.GetStream().Close();
-                c.Client.Close();
-            }
+            Client.GetStream().Close();
+            Client.Close();
             Server.Handlers.Remove(this);
         }
 
@@ -229,10 +247,10 @@ namespace IPR2
             return client;
         }
 
-        private void SendAck(TcpClient client)
+        private void SendAck()
         {
             bool ack = true;
-            SendMessage(client, new
+            SendMessage (new
             {
                 id = "ack",
                 data = new
@@ -242,10 +260,10 @@ namespace IPR2
             });
         }
 
-        private void SendNotAck(TcpClient client)
+        private void SendNotAck()
         {
             bool ack = false;
-            SendMessage(client, new
+            SendMessage(new
             {
                 id = "ack",
                 data = new
@@ -257,13 +275,19 @@ namespace IPR2
 
         private void SendPatients()
         {
-            SendMessage(Client, new
+            List<string> patients = new List<string>();
+
+            foreach (Client c in Server.DataBase.Clients)
             {
-                id = "patient/send",
-                data = new
+                if (!c.IsDoctor)
                 {
-                    patients = Server.DataBase.Clients.ToArray()
+                    patients.Add(c.Name);
                 }
+            }
+
+            SendMessage(new
+            {
+                patient = patients.ToArray()
             });
         }
     }

@@ -11,7 +11,7 @@ namespace IPR2
 {
     class Server
     {
-        public static DataBase DataBase { get; set; }
+        public static DataBase DataBase { get; set; } = new DataBase();
         public static List<ClientHandler> Handlers { get; set; }
         public List<Thread> Threads = new List<Thread>();
 
@@ -20,7 +20,6 @@ namespace IPR2
 
         public Server()
         {
-            DataBase = new DataBase();
             IPAddress localIp = GetLocalIpAddress();
             Handlers = new List<ClientHandler>();
 
@@ -31,7 +30,7 @@ namespace IPR2
                 Environment.Exit(1);
             }
             _listener = new TcpListener(_currentId, 1337);
-
+            //Server.DataBase._fileManager.LoadTraining();
         }
 
         public void Run()

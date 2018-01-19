@@ -52,12 +52,11 @@ namespace IPR2Client
              dynamic message = Encoding.Unicode.GetString(buffer, 0, totalRead);
                 
              return message;
-           
         }
 
         public void SendMessage(dynamic message)
         { 
-                //make sure the other end decodes with the same format!
+            //make sure the other end decodes with the same format!
             message = JsonConvert.SerializeObject(message);
             byte[] bytes = Encoding.Unicode.GetBytes(message);
             Client.GetStream().Write(bytes, 0, bytes.Length);
@@ -78,7 +77,6 @@ namespace IPR2Client
                 };
 
                 SendMessage(message);
-
 
                 Client.GetStream().Close();
                 Client.Close();
@@ -140,6 +138,60 @@ namespace IPR2Client
             }
         }
 
+        public List<String> getLog(string name, string training)
+        {
+            try
+            {
+                SendMessage(new
+                {
+                    id = "send/traininglog",
+                    data = new
+                    {
+                        name = name,
+                        training = training
+                    }
+                });
+
+                dynamic message = JsonConvert.DeserializeObject(ReadMessage());
+                List<string> log = new List<string>();
+                for (int i = 0; i < message.data.log.Count; i++)
+                {
+                    log.Add((string)message.data.log[i]);
+                }
+                return log;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+                return new List<string>();
+            }
+        }
+
+        public int GetAge(string gebruikersnaam)
+        {
+            try
+            {
+                dynamic message = new
+                {
+                    id = "get/age",
+                    data = new
+                    {
+                        name = gebruikersnaam,
+                    }
+                };
+                SendMessage(message);
+                dynamic ageMessage = JsonConvert.DeserializeObject(ReadMessage());
+                var age = (int) ageMessage.data.age;
+                return age;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.StackTrace);
+                return -1;
+            }
+        }
+    
+
         public void AddLogEntry(string text, string name)
         {
             dynamic message = new
@@ -182,13 +234,13 @@ namespace IPR2Client
             SendMessage(message);
         }
 
-        public List<Training> GetTrainingen(string name)
+        public List<string> GetTrainingen(string name)
         {
             try
             {
                 dynamic message = new
                 {
-                    id = "load/training",
+                    id = "get/trainings",
                     data = new
                     {
                         name = name
@@ -197,37 +249,61 @@ namespace IPR2Client
 
                 SendMessage(message);
 
-                dynamic feedback = JsonConvert.DeserializeObject(ReadMessage());
-                return feedback.data.trainingen;
+                dynamic readmessage = JsonConvert.DeserializeObject(ReadMessage());
+                List<string> trainingnames = new List<string>();
+                for (int i = 0; i < readmessage.training.Count; i++)
+                {
+                    trainingnames.Add((string)readmessage.training[i]);
+                }
+                return trainingnames;
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.StackTrace);
-                return new List<Training>();
+                return new List<string>();
             }
         }
 
-        public List<User> GetUsers()
+        public void saveAllData()
         {
             try
             {
                 dynamic message = new
                 {
-                    id = "load/user",
-                    data = new
-                    {
-                    }
+                    id = "save/training"
                 };
 
                 SendMessage(message);
-
-                dynamic feedback = JsonConvert.DeserializeObject(ReadMessage());
-                return (List<User>)feedback.data.users;
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.StackTrace);
-                return new List<User>();
+            }
+        }
+
+        public List<string> GetUsers()
+        {
+            try
+            {
+                dynamic message = new
+                {
+                    id = "load/user"
+                };
+
+                SendMessage(message);
+
+                dynamic readmessage = JsonConvert.DeserializeObject(ReadMessage());
+                List<string> patientnames = new List<string>();
+                for(int i = 0; i < readmessage.patient.Count; i++)
+                {
+                    patientnames.Add((string)readmessage.patient[i]);
+                }
+                return patientnames;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.StackTrace);
+                return new List<string>();
             }
         }
     }

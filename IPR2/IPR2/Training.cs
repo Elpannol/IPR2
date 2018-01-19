@@ -17,7 +17,6 @@ namespace IPR2
         {
             _measurements = new List<Measurement>();
             _name = name;
-
         }
 
         public void AddMeasurement(Measurement mes)

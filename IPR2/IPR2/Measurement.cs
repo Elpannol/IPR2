@@ -38,6 +38,11 @@
         {
             return $"weerstand: {Weerstand} Watt, hartslag: {Hartslag} BPM, rondes: {Rondes} RPM, tijd: {Time.ToString()} Min";
         }
+
+        public string ToRawData()
+        {
+            return $"{Weerstand} {Hartslag} {Rondes} {Time.ToString()}";
+        }
     }
 
     public struct SimpleTime

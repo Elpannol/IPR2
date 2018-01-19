@@ -30,7 +30,7 @@ namespace IPR2
                 t.Interrupt();
                 t.Abort();
             }
-
+            
             server.KillAllClient();
 
             //murder the server
@@ -108,7 +108,41 @@ namespace IPR2
             {
                 Console.WriteLine("enter password...");
                 var password = Console.ReadLine();
-                Server.DataBase.AddClient(new Client(name,password,isdoctor));
+
+                if (isdoctor)
+                {
+                    Server.DataBase.AddClient(new Client(name, password));
+                    return;
+                }
+                Console.WriteLine("enter age...");
+                string textAge = Console.ReadLine();
+                int age = 0;
+                while (true)
+                {
+                    if (int.TryParse(textAge, out age)) break;
+                    else
+                    {
+                        Console.Write("Age must be a number");
+                        Console.Write("Continue? [y/n]");
+                        string answer = Console.ReadLine();
+                        if (answer.Equals("y"))
+                        {
+                            textAge = Console.ReadLine();
+                            continue;
+                        }
+                        else if (answer.Equals("n"))
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Command not recognised");
+                            continue;
+                        }
+                    }
+                
+                }
+                Server.DataBase.AddClient(new Client(name,password,age));
             }
                         
                     

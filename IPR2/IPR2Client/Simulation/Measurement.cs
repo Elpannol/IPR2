@@ -50,7 +50,7 @@ namespace IPR2Client.Simulation
             raw += Weerstand + " "; // Not sure about this one...
             raw += "787" + " "; // energy
             raw += $"{Time.Minutes}:{Time.Seconds}" + " "; // Time
-            raw += "249724" + " "; // Actual power
+            raw += Weerstand + " "; // Actual power
 
             return raw;
         }

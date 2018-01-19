@@ -30,7 +30,9 @@ namespace IPR2Client.Forms
             comportBox.Items.Add("Simulation");
         }
 
-        private void Results_FormClosing(object sender, FormClosingEventArgs e) {
+        private void Results_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Login.Handler.saveAllData();
             Login.Handler.Disconnect();
             Application.Exit();
         }
@@ -80,7 +82,6 @@ namespace IPR2Client.Forms
             } catch (Exception exception) {
                 Console.WriteLine(exception.StackTrace);
             }
-            //trainingen = Login.Handler.GetTrainingen(_gebruikersnaam);
 
             for(int i = 0; i<trainingen.Count; i++)
             {

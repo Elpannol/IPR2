@@ -14,14 +14,27 @@ namespace IPR2
         public bool IsDoctor { get; set; }
         public Log Log { get; set; }
         public List<Training> Traingingen { get; set; }
+        public int _age { get; set; }
 
-        public Client(string name, string password, bool isDoctor)
+        public Client(string name, string password)
         {
             Traingingen = new List<Training>();
             Name = name;
             _password = password;
-            IsDoctor = isDoctor;
+            IsDoctor = true;
+            _age = 0;
             Log = new Log($"{name} log");
+        }
+
+        public Client(string name, string password, int age)
+        {
+            Traingingen = new List<Training>();
+            Name = name;
+            _password = password;
+            _age = age;
+            IsDoctor = false;
+            Log = new Log($"{name} log");
+       
         }
 
         public void AddTraining()
@@ -32,13 +45,39 @@ namespace IPR2
         public override string ToString()
         {
             string text = $"Name: {Name}\n" +
-                          $"Is Doctor: {IsDoctor}";
+                          $"Is Doctor: {IsDoctor}" +
+                          $"Age: {_age}";
             return text;
         }
 
         public string GetPassword()
         {
             return _password;
+        }
+
+        public dynamic getJsonData()
+        {
+            dynamic data = new
+            {
+                name = Name,
+                password = _password,
+                age = _age,
+                isdoctor = IsDoctor,
+            };
+            return data;
+        }
+
+        public Training getTraining(string name)
+        {
+            Training training = null;
+            foreach(Training t in Traingingen)
+            {
+                if (t._name.Equals(name))
+                {
+                    training = t;
+                }
+            }
+            return training;
         }
     }
 }

@@ -13,10 +13,12 @@ namespace IPR2
     public class DataBase
     {
         public List<Client> Clients { get; set; }
+        public FileManager _fileManager { get; set; }
 
         public DataBase()
         {
             Clients =  new List<Client>();
+            _fileManager = new FileManager();
         }
 
         public  void AddClient(Client client)
@@ -76,53 +78,6 @@ namespace IPR2
             return isClient;
         }
 
-        private string SetFilePath()
-        {
-            return @"..\..\PatientData\clients.save";
-        }
-
-        public void SaveTraining(dynamic message)
-        {
-            WriteToJsonFile<Client>(SetFilePath(), Clients);
-        }
-
-        public void LoadTraining(dynamic message)
-        {
-            ReadFromJson(SetFilePath());
-        }
-
-        private static void WriteToJsonFile<T>(string filePath, List<Client> clients, bool append = true)
-        {
-            TextWriter writer = null;
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-                try
-                {
-                    var contentsToWriteToFile = JsonConvert.SerializeObject(clients);
-                    writer = new StreamWriter(filePath, append);
-                    writer.WriteLine(contentsToWriteToFile);
-                }
-                finally
-                {
-                    writer?.Close();
-                }
-            }
-            else
-            {
-                try
-                {
-                    var contentsToWriteToFile = JsonConvert.SerializeObject(clients);
-                    writer = new StreamWriter(filePath, append);
-                    writer.WriteLine(contentsToWriteToFile);
-                }
-                finally
-                {
-                    writer?.Close();
-                }
-            }
-        }
-
         public List<Client> GetAllDoctors()
         {
             List<Client> doctors = new List<Client>();
@@ -147,28 +102,6 @@ namespace IPR2
                 }
             }
             return patients;
-        }
-
-        private void ReadFromJson(string filePath)
-        {
-            TextReader reader = null;
-            try
-            {
-                reader = new StreamReader(filePath);
-                var fileContent = reader.ReadToEnd();
-                var c = JsonConvert.DeserializeObject<List<Client>>(fileContent);
-                foreach (var toAdd in c)
-                {
-                    if (!Clients.Contains(toAdd))
-                    {
-                        Clients.AddRange(c);
-                    }
-                }
-            }
-            finally
-            {
-                reader?.Close();
-            }
         }
     }
 }

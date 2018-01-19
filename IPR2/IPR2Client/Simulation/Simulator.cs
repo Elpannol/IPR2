@@ -76,7 +76,7 @@ namespace IPR2Client.Forms
         }
 
         public string ReadLine() {
-            Measurement measurement = this.UpdateSim();
+            Measurement measurement = UpdateSim();
 
             return measurement.ToRawData();
         }
