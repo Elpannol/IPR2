@@ -22,12 +22,39 @@ namespace IPR2Client.Forms
             loginLabel.Text = gebruikersnaam;
             _gebruikersnaam = gebruikersnaam;
             trainingen = new List<Training>();
+            getTrainings();
 
             PortStrings = SerialPort.GetPortNames();
             foreach (var port in PortStrings) {
                 comportBox.Items.Add(port);
             }
             comportBox.Items.Add("Simulation");
+        }
+
+        private void getTrainings()
+        {
+            List<string> trainingNameList = Login.Handler.GetTrainingen(_gebruikersnaam);
+            trainingen = new List<Training>();
+            foreach (String s in trainingNameList)
+            {
+                trainingen.Add(new Training(new List<Measurement>(), s));
+            }
+
+            foreach(Training t in trainingen)
+            {
+                var log = Login.Handler.getLog(_gebruikersnaam, t._name);
+            
+                foreach (String s in log)
+                {
+                    var list = s.Split();
+                    var timeString = list[3];
+                    list[3] = "0";
+                    var timeList = timeString.Split(':');
+                    t._measurements.Add(new Measurement(int.Parse(list[0]), int.Parse(list[1]), int.Parse(list[2]), int.Parse(timeList[0]), int.Parse(timeList[1])));
+                }
+            }
+            refresh();
+
         }
 
         private void Results_FormClosing(object sender, FormClosingEventArgs e)
