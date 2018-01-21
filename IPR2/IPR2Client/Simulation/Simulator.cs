@@ -10,7 +10,7 @@ namespace IPR2Client.Forms
 {
     public partial class Simulator : Form
     {
-        private readonly Measurement Measurement;
+        public readonly Measurement Measurement;
         private int _time;
         private string _name;
 
@@ -19,7 +19,7 @@ namespace IPR2Client.Forms
             _name = name;
             _time = 0;
             SimpleTime temp = new SimpleTime(_time / 60, _time % 60);
-            Measurement = new Measurement(20, 100, 50, temp.Minutes, temp.Seconds);
+            Measurement = new Measurement(0, 100, 0, temp.Minutes, temp.Seconds);
             InitializeComponent();
             FormClosing += Simulator_FormClosing;
 
@@ -87,12 +87,15 @@ namespace IPR2Client.Forms
 
         public Measurement UpdateSim()
         {
-            if (_time < 5999)
+            if(Measurement.Rondes > 0)
             {
-                _time++;
-                Measurement.Time = new SimpleTime(_time / 60, _time % 60);
+                if (_time < 5999)
+                {
+                    _time++;
+                    Measurement.Time = new SimpleTime(_time / 60, _time % 60);
+                }
+                tijd.Text = Measurement.Time.ToString();
             }
-            tijd.Text = Measurement.Time.ToString();
 
             Measurement measurement = new Measurement(
                 Measurement.Weerstand,

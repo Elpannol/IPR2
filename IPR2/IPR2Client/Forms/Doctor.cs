@@ -43,7 +43,7 @@ namespace IPR2Client.Forms
 
         private void trainingListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            log = Login.Handler.getLog(selectedName, trainingen[trainingListBox.SelectedIndex]._name);
+            log = Login.Handler.getLog(selectedName, trainingListBox.GetItemText(trainingListBox.SelectedItem));
             Training training = trainingen[trainingListBox.SelectedIndex];
             training._measurements = new List<Measurement>();
 

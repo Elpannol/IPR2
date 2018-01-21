@@ -49,19 +49,14 @@ namespace IPR2Client
             SendCommand($"PW {watt}");
         }
 
-        public void ChangeTime(string time)
-        {
-            SendCommand($"PT {time}");
-        }
-
-        public void ChangeDistance(string distance)
-        {
-            SendCommand($"PD {distance}");
-        }
- 
         public void SendCommand(string command) {
-            if (isSimulating) {
-                // TODO: communication with simulator
+            if (isSimulating)
+            {
+                if (command.Contains("PW"))
+                {
+                    var list = command.Split();
+                    simulator.Measurement.Weerstand = int.Parse(list[1]);
+                }
             } else {
                 if ((serialPort != null) && serialPort.IsOpen)
                     serialPort.WriteLine(command + "\n\r");

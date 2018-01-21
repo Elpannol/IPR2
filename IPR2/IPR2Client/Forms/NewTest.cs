@@ -15,9 +15,14 @@ namespace IPR2Client.Forms
         private string _name;
         private Results results;
         private Timer timer1;
+
         private AddTraining _addTraining;
         public List<Measurement> measurements;
+
         public int _age;
+        public int currentPower;
+        public TrainingState state;
+        public TrainingChooser chooser;
 
         public NewTest(string name, Results results, AddTraining addTraining)
         {
@@ -30,6 +35,8 @@ namespace IPR2Client.Forms
             this.connection = new BicycleConnection(name);
             // Initialise the rest of the attributes and start the timer
             this.Initialise(name, addTraining);
+            state = TrainingState.START;
+
         }
 
         public NewTest(string name, Results results, SerialPort serialPort, AddTraining addTraining)
@@ -49,9 +56,11 @@ namespace IPR2Client.Forms
          */
         private void Initialise(string name, AddTraining addTraining) {
             // Some needed attributes
+            currentPower = 20;
             measurements = new List<Measurement>();
             _name = name;
             _addTraining = addTraining;
+            chooser = new TrainingChooser(_age);
 
             // Start the timer
             timer1 = new Timer();
@@ -74,13 +83,104 @@ namespace IPR2Client.Forms
 
                 Console.WriteLine("Reading...");
                 var temp = connection.ReceiveCommand();
+                Measurement meas = ParseMeasurement(temp);
 
-                measurements.Add(ParseMeasurement(temp));
+                switch (state)
+                {
+                    case TrainingState.START:
+                        if(meas.Rondes == 0)
+                        {
+                            return;
+                        }
+                        state = TrainingState.WARMINGUP;
+                        break;
+                    case TrainingState.WARMINGUP:
+                        connection.EnableCommand();
+                        connection.ChangePower($"{currentPower}");
+                        if (meas.Time.Seconds == 0)
+                        {
+                            checkHeartRate(meas);
+                        }
+                        if (meas.Time.Minutes == 2)
+                        {
+                            state = TrainingState.REALTEST;
+                        }
+                        break;
+                    case TrainingState.REALTEST:
+                        if(meas.Rondes < 50)
+                        {
+                            currentPower = currentPower + 5;
+                            connection.EnableCommand();
+                            connection.ChangePower($"{currentPower}");
+                        }
+                        else if(meas.Rondes > 60)
+                        {
+                            currentPower = currentPower - 5;
+                            connection.EnableCommand();
+                            connection.ChangePower($"{currentPower}");
+                        }
+
+                        if(meas.Time.Minutes == 5)
+                        {
+                            if (meas.Time.Seconds % 15 == 0)
+                            {
+                                checkHeartRate(meas);
+                            }
+                        }
+                        else
+                        {
+                            if (meas.Time.Seconds == 0)
+                            {
+                                checkHeartRate(meas);
+                            }
+                        }
+
+
+                        if(meas.Time.Minutes == 6)
+                        {
+                            state = TrainingState.COOLINGDOWN;
+                        }
+                        break;
+                    case TrainingState.COOLINGDOWN:
+                        if (meas.Time.Seconds % 15 == 0)
+                        {
+                            checkHeartRate(meas);
+                        }
+
+                        if(meas.Time.Minutes == 7)
+                        {
+                            state = TrainingState.STOP;
+                        }
+                        break;
+                    case TrainingState.STOP:
+                        Close();
+                        return;
+                }
+
+                measurements.Add(meas);
             }
             catch (Exception exception)
             {
                 Console.WriteLine($"Exception! : {exception.StackTrace}");
             }   
+        }
+
+        private void checkHeartRate(Measurement meas)
+        {
+            if (meas.Hartslag > chooser.maxHeartRate)
+            {
+                //TODO: add warning for this
+                currentPower = currentPower - 5;
+                connection.EnableCommand();
+                connection.ChangePower($"{currentPower}");
+            }
+            else if (meas.Hartslag < 130)
+            {
+                currentPower = currentPower + 5;
+                connection.EnableCommand();
+                connection.ChangePower($"{currentPower}");
+            }
+
         }
 
         private void NewTest_FormClosing(object sender, FormClosingEventArgs e)
@@ -141,10 +241,13 @@ namespace IPR2Client.Forms
                 tempTime.Seconds);
 
             // This is where data is sent to the server.
-            Login.Handler.AddMeasurement(tempMeasurement, _name);
-            Login.Handler.ReadMessage();
-            Login.Handler.AddLogEntry(tempMeasurement.ToString(), _name);
-            Login.Handler.ReadMessage();
+            if(tempMeasurement.Rondes > 0 && state != TrainingState.START)
+            {
+                Login.Handler.AddMeasurement(tempMeasurement, _name);
+                Login.Handler.ReadMessage();
+                Login.Handler.AddLogEntry(tempMeasurement.ToString(), _name);
+                Login.Handler.ReadMessage();
+            }
 
             // Update simply changes the text fields.
             update(tempMeasurement.Weerstand.ToString(),
