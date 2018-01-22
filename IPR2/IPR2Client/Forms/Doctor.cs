@@ -53,13 +53,22 @@ namespace IPR2Client.Forms
                 var timeString = list[3];
                 list[3] = "0";
                 var timeList = timeString.Split(':');
-                training._measurements.Add(new Measurement(int.Parse(list[0]), int.Parse(list[1]), int.Parse(list[2]), int.Parse(timeList[0]), int.Parse(timeList[1])));
-            }
+                Measurement meas = new Measurement(int.Parse(list[0]), int.Parse(list[1]), int.Parse(list[2]), int.Parse(timeList[0]), int.Parse(timeList[1]));
+                training._measurements.Add(meas);
+
+                int totalTime = meas.Time.Seconds + meas.Time.Minutes * 60;
+
+                measurmentChart.ChartAreas[0].AxisX.Interval = 15;
+
+                measurmentChart.Series["Heartrate"].Points.AddXY(totalTime, meas.Hartslag);
+                measurmentChart.Series["Rondes"].Points.AddXY(totalTime,  meas.Rondes);
+             }
+
         }
 
         private void userListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            List<string> list = Login.Handler.GetTrainingen(users[userListBox.SelectedIndex]);
+            List<string> list = Login.Handler.GetTrainingen(userListBox.GetItemText(userListBox.SelectedItem));
             trainingen = new List<Training>();
             foreach(String s in list)
             {
@@ -103,6 +112,16 @@ namespace IPR2Client.Forms
             {
                 trainingListBox.Items.Add(trainingArray[i].ToString());
             }
+        }
+
+        private void measurmentChart_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void loginLabel_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
