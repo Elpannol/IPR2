@@ -81,9 +81,13 @@ namespace IPR2Client.Forms
                 Console.WriteLine("Sending");
                 connection.StartBicycle();
 
-                Console.WriteLine("Reading...");
-                var temp = connection.ReceiveCommand();
-                Measurement meas = ParseMeasurement(temp);
+                Measurement meas = null;
+                if (state != TrainingState.STOP)
+                {
+                    Console.WriteLine("Reading...");
+                    var temp = connection.ReceiveCommand();
+                    meas = ParseMeasurement(temp);
+                }
 
                 switch (state)
                 {
@@ -150,10 +154,10 @@ namespace IPR2Client.Forms
                         if(meas.Time.Minutes == 7)
                         {
                             state = TrainingState.STOP;
+                            setWarning("End of the training reached");
                         }
                         break;
                     case TrainingState.STOP:
-                        Close();
                         return;
                 }
 
@@ -165,14 +169,20 @@ namespace IPR2Client.Forms
             }   
         }
 
+        private void setWarning(string text)
+        {
+            warningLabel.Visible = true;
+            warningLabel.Text = text;
+        }
+
         private void checkHeartRate(Measurement meas)
         {
             if (meas.Hartslag > chooser.maxHeartRate)
             {
                 //TODO: add warning for this
-                currentPower = currentPower - 5;
-                connection.EnableCommand();
-                connection.ChangePower($"{currentPower}");
+                state = TrainingState.STOP;
+                setWarning("WANRING: Heartrate too high");
+
             }
             else if (meas.Hartslag < 130)
             {

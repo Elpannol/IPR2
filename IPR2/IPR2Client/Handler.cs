@@ -15,6 +15,7 @@ namespace IPR2Client
     {
         private TcpClient Client;
         private IPAddress _currentId;
+        public bool isConnected = false;
 
         public Handler()
         {
@@ -26,8 +27,20 @@ namespace IPR2Client
                 Console.WriteLine("Couldn't parse the ip address. Exiting code.");
                 Environment.Exit(1);
             }
+        }
 
-            Client.Connect(_currentId, 1337);
+        public bool waitForConnection()
+        {
+            try{
+                Client.Connect(_currentId, 1337);
+                isConnected = true;
+                return isConnected;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+                return false;
+            }
         }
 
         public IPAddress GetLocalIpAddress()

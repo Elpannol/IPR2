@@ -38,6 +38,7 @@
             this.tijdLabel = new System.Windows.Forms.Label();
             this.rondesLabel = new System.Windows.Forms.Label();
             this.hartslagLabel = new System.Windows.Forms.Label();
+            this.warningLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -45,7 +46,7 @@
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.Location = new System.Drawing.Point(250, 24);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(132, 114);
             this.pictureBox1.TabIndex = 12;
@@ -132,11 +133,25 @@
             this.hartslagLabel.Size = new System.Drawing.Size(60, 20);
             this.hartslagLabel.TabIndex = 19;
             // 
+            // warningLabel
+            // 
+            this.warningLabel.AutoSize = true;
+            this.warningLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.warningLabel.ForeColor = System.Drawing.Color.Red;
+            this.warningLabel.Location = new System.Drawing.Point(11, 139);
+            this.warningLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.warningLabel.Name = "warningLabel";
+            this.warningLabel.Size = new System.Drawing.Size(69, 18);
+            this.warningLabel.TabIndex = 22;
+            this.warningLabel.Text = "Warning!!";
+            this.warningLabel.Visible = false;
+            // 
             // NewTest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(398, 151);
+            this.ClientSize = new System.Drawing.Size(398, 166);
+            this.Controls.Add(this.warningLabel);
             this.Controls.Add(this.tijdLabel);
             this.Controls.Add(this.rondesLabel);
             this.Controls.Add(this.hartslagLabel);
@@ -147,7 +162,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "NewTest";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "CG Fit";
@@ -168,5 +183,6 @@
         private System.Windows.Forms.Label tijdLabel;
         private System.Windows.Forms.Label rondesLabel;
         private System.Windows.Forms.Label hartslagLabel;
+        private System.Windows.Forms.Label warningLabel;
     }
 }

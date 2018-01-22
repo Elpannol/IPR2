@@ -24,22 +24,34 @@ namespace IPR2Client
 
         private void LoginButton_Click(object sender, EventArgs e)
         {
-            if(Handler.Login(gebruikersNaam.Text, wachtwoord.Text))
+            if (Handler.isConnected || Handler.waitForConnection())
             {
-                Visible = false;
-                if (Handler.IsDoctor(gebruikersNaam.Text))
+                if (Handler.Login(gebruikersNaam.Text, wachtwoord.Text))
                 {
-                    Doctor doctor = new Doctor(gebruikersNaam.Text);
-                    doctor.Visible = true;
+                    Visible = false;
+                    if (Handler.IsDoctor(gebruikersNaam.Text))
+                    {
+                        Doctor doctor = new Doctor(gebruikersNaam.Text);
+                        doctor.Visible = true;
+                    }
+                    else
+                    {
+                        Results results = new Results(gebruikersNaam.Text);
+                        results.Visible = true;
+                    }
                 }
                 else
                 {
-                    Results results = new Results(gebruikersNaam.Text);
-                    results.Visible = true;
+                    wrongLabel.Text = "Gebruikersnaam of wachtwoord onjuist!";
+                    wrongLabel.Visible = true;
+
                 }
             }
             else
-            wrongLabel.Visible = true;
+            {
+                wrongLabel.Text = "Kan geen connectie met de server maken!";
+                wrongLabel.Visible = true;
+            }
         }
     }
 }

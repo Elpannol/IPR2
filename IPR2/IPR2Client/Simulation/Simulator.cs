@@ -42,7 +42,7 @@ namespace IPR2Client.Forms
 
         private void hartslagPlus_Click(object sender, EventArgs e)
         {
-            if (Measurement.Hartslag < 196)
+            if (Measurement.Hartslag < 224)
                 Measurement.Hartslag += 5;
             hartslag.Text = Measurement.Hartslag + "";
         }

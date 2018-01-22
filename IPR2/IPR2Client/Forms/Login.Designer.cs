@@ -43,9 +43,10 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 130);
+            this.label1.Location = new System.Drawing.Point(9, 106);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(169, 24);
+            this.label1.Size = new System.Drawing.Size(137, 18);
             this.label1.TabIndex = 0;
             this.label1.Text = "Gebruikersnaam:";
             // 
@@ -53,44 +54,49 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(12, 164);
+            this.label2.Location = new System.Drawing.Point(9, 133);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(132, 24);
+            this.label2.Size = new System.Drawing.Size(108, 18);
             this.label2.TabIndex = 1;
             this.label2.Text = "Wachtwoord:";
             // 
             // gebruikersNaam
             // 
             this.gebruikersNaam.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gebruikersNaam.Location = new System.Drawing.Point(200, 127);
+            this.gebruikersNaam.Location = new System.Drawing.Point(150, 103);
+            this.gebruikersNaam.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.gebruikersNaam.Name = "gebruikersNaam";
-            this.gebruikersNaam.Size = new System.Drawing.Size(206, 29);
+            this.gebruikersNaam.Size = new System.Drawing.Size(156, 24);
             this.gebruikersNaam.TabIndex = 2;
             // 
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(12, 11);
+            this.pictureBox1.Location = new System.Drawing.Point(9, 9);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(132, 116);
+            this.pictureBox1.Size = new System.Drawing.Size(99, 94);
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             // 
             // wachtwoord
             // 
             this.wachtwoord.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.wachtwoord.Location = new System.Drawing.Point(200, 161);
+            this.wachtwoord.Location = new System.Drawing.Point(150, 131);
+            this.wachtwoord.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.wachtwoord.Name = "wachtwoord";
             this.wachtwoord.PasswordChar = '*';
-            this.wachtwoord.Size = new System.Drawing.Size(206, 29);
+            this.wachtwoord.Size = new System.Drawing.Size(156, 24);
             this.wachtwoord.TabIndex = 4;
             // 
             // LoginButton
             // 
             this.LoginButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LoginButton.Location = new System.Drawing.Point(200, 29);
+            this.LoginButton.Location = new System.Drawing.Point(150, 24);
+            this.LoginButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.LoginButton.Name = "LoginButton";
-            this.LoginButton.Size = new System.Drawing.Size(206, 71);
+            this.LoginButton.Size = new System.Drawing.Size(154, 58);
             this.LoginButton.TabIndex = 5;
             this.LoginButton.Text = "Login";
             this.LoginButton.UseVisualStyleBackColor = true;
@@ -101,17 +107,18 @@
             this.wrongLabel.AutoSize = true;
             this.wrongLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.wrongLabel.ForeColor = System.Drawing.Color.Red;
-            this.wrongLabel.Location = new System.Drawing.Point(118, 193);
+            this.wrongLabel.Location = new System.Drawing.Point(11, 157);
+            this.wrongLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.wrongLabel.Name = "wrongLabel";
-            this.wrongLabel.Size = new System.Drawing.Size(270, 18);
+            this.wrongLabel.Size = new System.Drawing.Size(223, 15);
             this.wrongLabel.TabIndex = 6;
             this.wrongLabel.Text = "Gebruikersnaam of wachtwoord onjuist!";
             // 
             // Login
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(422, 218);
+            this.ClientSize = new System.Drawing.Size(316, 177);
             this.Controls.Add(this.wrongLabel);
             this.Controls.Add(this.LoginButton);
             this.Controls.Add(this.wachtwoord);
@@ -120,6 +127,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Login";
