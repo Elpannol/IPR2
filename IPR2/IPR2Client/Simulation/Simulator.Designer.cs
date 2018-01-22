@@ -33,8 +33,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.weerstandMin = new System.Windows.Forms.Button();
-            this.weerstandPlus = new System.Windows.Forms.Button();
             this.hartslagMin = new System.Windows.Forms.Button();
             this.rondesMin = new System.Windows.Forms.Button();
             this.hartslagPlus = new System.Windows.Forms.Button();
@@ -49,9 +47,10 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 10);
+            this.label1.Location = new System.Drawing.Point(9, 8);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(106, 24);
+            this.label1.Size = new System.Drawing.Size(84, 18);
             this.label1.TabIndex = 15;
             this.label1.Text = "Weerstand:";
             // 
@@ -59,9 +58,10 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(12, 45);
+            this.label2.Location = new System.Drawing.Point(9, 37);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(83, 24);
+            this.label2.Size = new System.Drawing.Size(67, 18);
             this.label2.TabIndex = 16;
             this.label2.Text = "Hartslag:";
             // 
@@ -69,9 +69,10 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(12, 80);
+            this.label3.Location = new System.Drawing.Point(9, 65);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(117, 24);
+            this.label3.Size = new System.Drawing.Size(92, 18);
             this.label3.TabIndex = 17;
             this.label3.Text = "Rondes/Min:";
             // 
@@ -79,37 +80,19 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(12, 115);
+            this.label4.Location = new System.Drawing.Point(9, 93);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(46, 24);
+            this.label4.Size = new System.Drawing.Size(35, 18);
             this.label4.TabIndex = 18;
             this.label4.Text = "Tijd:";
             // 
-            // weerstandMin
-            // 
-            this.weerstandMin.Location = new System.Drawing.Point(185, 14);
-            this.weerstandMin.Name = "weerstandMin";
-            this.weerstandMin.Size = new System.Drawing.Size(20, 20);
-            this.weerstandMin.TabIndex = 19;
-            this.weerstandMin.Text = "-";
-            this.weerstandMin.UseVisualStyleBackColor = true;
-            this.weerstandMin.Click += new System.EventHandler(this.weerstandMin_Click);
-            // 
-            // weerstandPlus
-            // 
-            this.weerstandPlus.Location = new System.Drawing.Point(353, 14);
-            this.weerstandPlus.Name = "weerstandPlus";
-            this.weerstandPlus.Size = new System.Drawing.Size(20, 20);
-            this.weerstandPlus.TabIndex = 20;
-            this.weerstandPlus.Text = "+";
-            this.weerstandPlus.UseVisualStyleBackColor = true;
-            this.weerstandPlus.Click += new System.EventHandler(this.weerstandPlus_Click);
-            // 
             // hartslagMin
             // 
-            this.hartslagMin.Location = new System.Drawing.Point(185, 49);
+            this.hartslagMin.Location = new System.Drawing.Point(139, 40);
+            this.hartslagMin.Margin = new System.Windows.Forms.Padding(2);
             this.hartslagMin.Name = "hartslagMin";
-            this.hartslagMin.Size = new System.Drawing.Size(20, 20);
+            this.hartslagMin.Size = new System.Drawing.Size(15, 16);
             this.hartslagMin.TabIndex = 21;
             this.hartslagMin.Text = "-";
             this.hartslagMin.UseVisualStyleBackColor = true;
@@ -117,9 +100,10 @@
             // 
             // rondesMin
             // 
-            this.rondesMin.Location = new System.Drawing.Point(185, 84);
+            this.rondesMin.Location = new System.Drawing.Point(139, 68);
+            this.rondesMin.Margin = new System.Windows.Forms.Padding(2);
             this.rondesMin.Name = "rondesMin";
-            this.rondesMin.Size = new System.Drawing.Size(20, 20);
+            this.rondesMin.Size = new System.Drawing.Size(15, 16);
             this.rondesMin.TabIndex = 22;
             this.rondesMin.Text = "-";
             this.rondesMin.UseVisualStyleBackColor = true;
@@ -127,9 +111,10 @@
             // 
             // hartslagPlus
             // 
-            this.hartslagPlus.Location = new System.Drawing.Point(353, 49);
+            this.hartslagPlus.Location = new System.Drawing.Point(265, 40);
+            this.hartslagPlus.Margin = new System.Windows.Forms.Padding(2);
             this.hartslagPlus.Name = "hartslagPlus";
-            this.hartslagPlus.Size = new System.Drawing.Size(20, 20);
+            this.hartslagPlus.Size = new System.Drawing.Size(15, 16);
             this.hartslagPlus.TabIndex = 23;
             this.hartslagPlus.Text = "+";
             this.hartslagPlus.UseVisualStyleBackColor = true;
@@ -137,9 +122,10 @@
             // 
             // rondesPlus
             // 
-            this.rondesPlus.Location = new System.Drawing.Point(353, 84);
+            this.rondesPlus.Location = new System.Drawing.Point(265, 68);
+            this.rondesPlus.Margin = new System.Windows.Forms.Padding(2);
             this.rondesPlus.Name = "rondesPlus";
-            this.rondesPlus.Size = new System.Drawing.Size(20, 20);
+            this.rondesPlus.Size = new System.Drawing.Size(15, 16);
             this.rondesPlus.TabIndex = 24;
             this.rondesPlus.Text = "+";
             this.rondesPlus.UseVisualStyleBackColor = true;
@@ -149,9 +135,10 @@
             // 
             this.weerstand.AutoSize = true;
             this.weerstand.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.weerstand.Location = new System.Drawing.Point(260, 10);
+            this.weerstand.Location = new System.Drawing.Point(195, 8);
+            this.weerstand.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.weerstand.Name = "weerstand";
-            this.weerstand.Size = new System.Drawing.Size(50, 24);
+            this.weerstand.Size = new System.Drawing.Size(40, 18);
             this.weerstand.TabIndex = 25;
             this.weerstand.Text = "0000";
             // 
@@ -159,9 +146,10 @@
             // 
             this.hartslag.AutoSize = true;
             this.hartslag.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.hartslag.Location = new System.Drawing.Point(260, 45);
+            this.hartslag.Location = new System.Drawing.Point(195, 37);
+            this.hartslag.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.hartslag.Name = "hartslag";
-            this.hartslag.Size = new System.Drawing.Size(50, 24);
+            this.hartslag.Size = new System.Drawing.Size(40, 18);
             this.hartslag.TabIndex = 26;
             this.hartslag.Text = "0000";
             // 
@@ -169,9 +157,10 @@
             // 
             this.rondes.AutoSize = true;
             this.rondes.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rondes.Location = new System.Drawing.Point(260, 80);
+            this.rondes.Location = new System.Drawing.Point(195, 65);
+            this.rondes.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.rondes.Name = "rondes";
-            this.rondes.Size = new System.Drawing.Size(50, 24);
+            this.rondes.Size = new System.Drawing.Size(40, 18);
             this.rondes.TabIndex = 27;
             this.rondes.Text = "0000";
             // 
@@ -179,17 +168,18 @@
             // 
             this.tijd.AutoSize = true;
             this.tijd.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tijd.Location = new System.Drawing.Point(244, 115);
+            this.tijd.Location = new System.Drawing.Point(183, 93);
+            this.tijd.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.tijd.Name = "tijd";
-            this.tijd.Size = new System.Drawing.Size(50, 24);
+            this.tijd.Size = new System.Drawing.Size(44, 18);
             this.tijd.TabIndex = 28;
-            this.tijd.Text = "0000";
+            this.tijd.Text = "00:00";
             // 
             // Simulator
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(410, 153);
+            this.ClientSize = new System.Drawing.Size(308, 124);
             this.Controls.Add(this.tijd);
             this.Controls.Add(this.rondes);
             this.Controls.Add(this.hartslag);
@@ -198,13 +188,12 @@
             this.Controls.Add(this.hartslagPlus);
             this.Controls.Add(this.rondesMin);
             this.Controls.Add(this.hartslagMin);
-            this.Controls.Add(this.weerstandPlus);
-            this.Controls.Add(this.weerstandMin);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Simulator";
             this.Text = "Simulator";
             this.ResumeLayout(false);
@@ -218,8 +207,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button weerstandMin;
-        private System.Windows.Forms.Button weerstandPlus;
         private System.Windows.Forms.Button hartslagMin;
         private System.Windows.Forms.Button rondesMin;
         private System.Windows.Forms.Button hartslagPlus;

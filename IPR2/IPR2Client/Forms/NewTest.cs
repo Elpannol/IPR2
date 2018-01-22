@@ -185,8 +185,6 @@ namespace IPR2Client.Forms
 
         private void NewTest_FormClosing(object sender, FormClosingEventArgs e)
         {
-            results.refresh();
-            results.Visible = true;
 
             connection.Close();
 
@@ -196,6 +194,11 @@ namespace IPR2Client.Forms
                 Training training = new Training(measurements, _name);
                 results.AddTraining(training);
             }
+
+            Login.Handler.EndTraining();
+
+            results.getTrainings();
+            results.Visible = true;
 
             Dispose();
         }
@@ -241,7 +244,7 @@ namespace IPR2Client.Forms
                 tempTime.Seconds);
 
             // This is where data is sent to the server.
-            if(tempMeasurement.Rondes > 0 && state != TrainingState.START)
+            if(tempMeasurement.Rondes > 0)
             {
                 Login.Handler.AddMeasurement(tempMeasurement, _name);
                 Login.Handler.ReadMessage();

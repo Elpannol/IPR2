@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace IPR2
@@ -6,12 +7,19 @@ namespace IPR2
     public class Log
     {
         public List<string> _log { get; set; }
-        private readonly string _logName;
+        public string _logName;
 
         public Log(string name)
         {
             _log =  new List<string>();
             _logName = name;
+        }
+
+        [JsonConstructor]
+        public Log(List<string> log, string logName)
+        {
+            _log = log;
+            _logName = logName;
         }
 
         public void AddLogEntry(string text)

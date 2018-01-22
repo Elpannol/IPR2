@@ -4,18 +4,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IPR2Client;
+using Newtonsoft.Json;
 
 namespace IPR2
 {
     public class Training
     {
-        public readonly List<Measurement> _measurements;
-        public readonly string _name;
-        private TrainingState _state;
+        [JsonProperty("_measurements")]
+        public List<Measurement> _measurements { get; set; }
+        public string _name { get; set; }
 
         public Training(string name)
         {
             _measurements = new List<Measurement>();
+            _name = name;
+        }
+
+        [JsonConstructor]
+        public Training(List<Measurement> measurements, string name)
+        {
+            _measurements = measurements;
             _name = name;
         }
 
@@ -32,35 +40,6 @@ namespace IPR2
         public int getLength()
         {
             return _measurements.Count - 1;
-        }
-
-        public void startTraining()
-        {
-            _state = TrainingState.START;
-        }
-
-        public void stopTraining()
-        {
-            _state = TrainingState.STOP;
-        }
-
-        public void checkTraining()
-        {
-            switch (_state)
-            {
-                case TrainingState.START:
-                    break;
-                case TrainingState.WARMINGUP:
-                    break;
-                case TrainingState.REALTEST:
-                    break;
-                case TrainingState.COOLINGDOWN:
-                    break;
-                case TrainingState.STOP:
-                    break;
-                default:
-                    break;
-            }
         }
     }
 }

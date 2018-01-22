@@ -1,10 +1,13 @@
-﻿namespace IPR2
+﻿using Newtonsoft.Json;
+
+namespace IPR2
 {
     public class Measurement
     {
         public int Weerstand { get; set; }
         public int Hartslag { get; set; }
         public int Rondes { get; set; }
+        [JsonProperty("Time")]
         public SimpleTime Time { get; set; }
 
         public Measurement(int weerstand, int hartslag, int rondes, int time1, int time2)
@@ -15,6 +18,7 @@
             Time = new SimpleTime(time1, time2);
         }
 
+        [JsonConstructor]
         public Measurement(int weerstand, int hartslag, int rondes, SimpleTime time)
         {
             Weerstand = weerstand;
@@ -22,7 +26,7 @@
             Rondes = rondes;
             Time = time;
         }
-
+       
         public int CompareTo(Measurement other)
         {
             if (Time == other.Time)
@@ -66,13 +70,14 @@
             }
         }
 
-        public readonly int Minutes;
-        public readonly int Seconds;
+        public int Minutes { get; set; }
+        public int Seconds { get; set; }
 
-        public SimpleTime(int min, int sec)
+        [JsonConstructor]
+        public SimpleTime(int minutes, int seconds)
         {
-            Minutes = min;
-            Seconds = sec;
+            Minutes = minutes;
+            Seconds = seconds;
         }
 
         public override string ToString()

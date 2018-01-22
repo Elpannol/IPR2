@@ -17,8 +17,8 @@ namespace IPR2
 
         public DataBase()
         {
-            Clients =  new List<Client>();
             _fileManager = new FileManager();
+            Clients = _fileManager.LoadAllClients();
         }
 
         public  void AddClient(Client client)
@@ -102,6 +102,11 @@ namespace IPR2
                 }
             }
             return patients;
+        }
+
+        public void SaveClient(Client client)
+        {
+            _fileManager.SaveTraining(client);
         }
     }
 }

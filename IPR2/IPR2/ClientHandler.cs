@@ -64,13 +64,26 @@ namespace IPR2
                                 id = "recieve/age",
                                 data = new
                                 {
-                                    age = (int)client._age
+                                    age = (int)client.Age
                                 }
                             });
                         break;
                     case "start/training":
                         Server.DataBase.SearchForClient(_name).AddTraining();
-                        break;                         
+                        break;
+                    case "end/training":
+                        var currentTrainings = Server.DataBase.SearchForClient(_name).Traingingen;
+                        var currentTraining = currentTrainings[currentTrainings.Count - 1];
+                        if(currentTraining._measurements.Count == 0)
+                        {
+                            currentTrainings.Remove(currentTraining);
+                        }
+                        else
+                        {
+                            Server.DataBase.SaveClient(Server.DataBase.SearchForClient(_name));
+                        }
+                        SendAck();
+                        break;
                     case "client/disconnect":
                         try
                         {
@@ -152,7 +165,6 @@ namespace IPR2
             {
                 int read = client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
                 totalRead += read;
-                Console.WriteLine("ReadMessage: " + read);
             } while (client.GetStream().DataAvailable);
             dynamic message = Encoding.Unicode.GetString(buffer, 0, totalRead);
             return message;

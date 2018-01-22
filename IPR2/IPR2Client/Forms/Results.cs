@@ -31,7 +31,7 @@ namespace IPR2Client.Forms
             comportBox.Items.Add("Simulation");
         }
 
-        private void getTrainings()
+        public void getTrainings()
         {
             List<string> trainingNameList = Login.Handler.GetTrainingen(_gebruikersnaam);
             trainingen = new List<Training>();
@@ -59,7 +59,6 @@ namespace IPR2Client.Forms
 
         private void Results_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Login.Handler.saveAllData();
             Login.Handler.Disconnect();
             Application.Exit();
         }
@@ -86,6 +85,12 @@ namespace IPR2Client.Forms
         {
             currentTraining = trainingen[trainingListBox.SelectedIndex];
             currentMeasurement = currentTraining.getMeasurement(0);
+            if (currentMeasurement == null) {
+                trainingen.Remove(currentTraining);
+                refresh();
+                return;
+            }
+
 
             weerstandLabel.Text = "" +currentMeasurement.Weerstand;
             hartslagLabel.Text = "" + currentMeasurement.Hartslag;
@@ -110,9 +115,9 @@ namespace IPR2Client.Forms
                 Console.WriteLine(exception.StackTrace);
             }
 
-            for(int i = 0; i<trainingen.Count; i++)
+            foreach(Training t in trainingen)
             {
-                trainingListBox.Items.Add(string.Format("Training " + (i+1)));
+                trainingListBox.Items.Add(t._name);
             }
         }
 

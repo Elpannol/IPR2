@@ -22,6 +22,10 @@ namespace IPR2Client.Simulation
 
         public Measurement getMeasurement(int index)
         {
+            if(_measurements.Count == 0)
+            {
+                return null;
+            }
             return _measurements[index];
         }
 

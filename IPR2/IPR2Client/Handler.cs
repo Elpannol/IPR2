@@ -41,16 +41,18 @@ namespace IPR2Client
 
         public dynamic ReadMessage()
         {
-             byte[] buffer = new byte[1028];
-             int totalRead = 0;
+            byte[] buffer = new byte[32768];
+            int totalRead = 0;
              do
              {
-                    int read = Client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
-                    totalRead += read;
+                int read = Client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
+                totalRead += read;
+                if(read > 0)
+                {
                     Console.WriteLine("ReadMessage: " + read);
+                }
              } while (Client.GetStream().DataAvailable);
              dynamic message = Encoding.Unicode.GetString(buffer, 0, totalRead);
-                
              return message;
         }
 
@@ -264,16 +266,17 @@ namespace IPR2Client
             }
         }
 
-        public void saveAllData()
+        public void EndTraining()
         {
             try
             {
                 dynamic message = new
                 {
-                    id = "save/training"
+                    id = "end/training"
                 };
 
                 SendMessage(message);
+                ReadMessage();
             }
             catch (Exception exception)
             {

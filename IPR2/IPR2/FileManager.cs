@@ -16,64 +16,57 @@ namespace IPR2
             _filePath = @"..\..\PatientData\";
         }
 
-        public void SaveTraining(List<Client> clients)
+        public void SaveTraining(Client client)
         {
-            WriteToJsonFile<Client>(clients);
+            WriteToJsonFile<Client>(client);
         }
 
-        public void LoadTraining(List<Client> clients)
+        private void WriteToJsonFile<T>(Client client)
         {
-            ReadFromJson(clients);
-        }
-
-        private void WriteToJsonFile<T>(List<Client> clients, bool append = true)
-        {
-            TextWriter writer = null;
+            StreamWriter writer = null;
             String filePath = "";
-            foreach (Client c in clients)
+
+            filePath = $"{_filePath}/{client.Name}.json";
+            if (!File.Exists(filePath))
             {
-                filePath = $"{_filePath}/{c.Name}.json";
-                if (!File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
-
-                File.Create(filePath);
-                try
-                {
-                    var contentsToWriteToFile = JsonConvert.SerializeObject(c);
-                    writer = new StreamWriter(filePath, append);
-                    writer.WriteLine(contentsToWriteToFile);
-                }
-                finally
-                {
-                    writer?.Close();
-                }
+                File.Delete(filePath);
             }
-
-        }
-
-        private void ReadFromJson(List<Client> clients)
-        {
-            TextReader reader = null;
-            if (File.Exists(_filePath)) return;
+            
+            writer = File.CreateText(filePath);
             try
             {
-                reader = new StreamReader(_filePath);
-                var fileContent = reader.ReadToEnd();
-                var c = JsonConvert.DeserializeObject<List<Client>>(fileContent);
-                foreach (var toAdd in c)
+                var serializer = new JsonSerializer();
+                serializer.Serialize(writer, client);
+            }
+            finally
+            {
+                writer?.Close();
+            }
+        }
+
+        public List<Client> LoadAllClients()
+        {
+            TextReader reader = null;
+
+            var clients = new List<Client>();
+            if (File.Exists(_filePath)) return clients;
+            try
+            {
+                string[] paths = Directory.GetFiles(_filePath);
+
+                foreach(string s in paths)
                 {
-                    if (!clients.Contains(toAdd))
-                    {
-                        clients.AddRange(c);
-                    }
+                    reader = new StreamReader(s);
+                    var fileContent = reader.ReadToEnd();
+                    var client = JsonConvert.DeserializeObject<Client>(fileContent);
+                    clients.Add(client);
                 }
             }
             finally
             {
                 reader?.Close();
             }
+            return clients;
         }
     }
 

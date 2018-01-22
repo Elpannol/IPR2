@@ -33,20 +33,6 @@ namespace IPR2Client.Forms
             this.Dispose();
         }
 
-        private void weerstandMin_Click(object sender, EventArgs e)
-        {
-            if (Measurement.Weerstand > 4)
-                Measurement.Weerstand -= 5;
-            weerstand.Text = Measurement.Weerstand + "";
-        }
-
-        private void weerstandPlus_Click(object sender, EventArgs e)
-        {
-            if (Measurement.Weerstand < 96)
-                Measurement.Weerstand += 5;
-            weerstand.Text = Measurement.Weerstand + "";
-        }
-
         private void hartslagMin_Click(object sender, EventArgs e)
         {
             if (Measurement.Hartslag > 4)
@@ -96,6 +82,8 @@ namespace IPR2Client.Forms
                 }
                 tijd.Text = Measurement.Time.ToString();
             }
+
+            weerstand.Text = $"{Measurement.Weerstand}";
 
             Measurement measurement = new Measurement(
                 Measurement.Weerstand,
