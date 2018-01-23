@@ -193,7 +193,6 @@ namespace IPR2
             {
                 var trainingen = Server.DataBase.SearchForClient((string)message.data.name).Traingingen;
                 trainingen.ElementAt(trainingen.Count - 1)._vo2 = (double)message.data.vo2;
-
             }
             catch (Exception e)
             {

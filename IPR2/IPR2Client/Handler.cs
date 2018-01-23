@@ -205,7 +205,7 @@ namespace IPR2Client
             {
                 dynamic message = new
                 {
-                    id = "send/v02",
+                    id = "send/vo2",
                     data = new
                     {
                         vo2 = vo2,

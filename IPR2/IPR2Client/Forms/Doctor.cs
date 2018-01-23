@@ -35,6 +35,10 @@ namespace IPR2Client.Forms
 
         private void trainingListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            foreach (var series in measurmentChart.Series)
+            {
+                series.Points.Clear();
+            }
             var message = Login.Handler.getLog(selectedName, trainingListBox.GetItemText(trainingListBox.SelectedItem));
             log = new List<string>();
             for (int i = 0; i < message.data.log.Count; i++)
@@ -51,7 +55,7 @@ namespace IPR2Client.Forms
             }
             else
             {
-                setWarning($"Vo2 calculated: {training.vo2}");
+                setWarning($"Vo2 calculated: {training.vo2:##.00}");
             }
 
             foreach(String s in log)

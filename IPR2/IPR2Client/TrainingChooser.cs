@@ -16,6 +16,7 @@ namespace IPR2Client
         public TrainingChooser(int age, bool isman)
         {
             _age = age;
+            _isMan = isman;
             checkRate();
         }
 
@@ -68,15 +69,10 @@ namespace IPR2Client
             }
         }
 
-        public double CalculateVo2(List<int> heartRates)
+        public double CalculateVo2(List<int> heartRates, int wattage)
         {
             double vo2 = 0;
-            int averageHeartRate = 0;
-            foreach(int i in heartRates)
-            {
-                averageHeartRate += i;
-            }
-            averageHeartRate = averageHeartRate / heartRates.Count;
+            int averageHeartRate = getHeartRate(heartRates);
 
             if(averageHeartRate < 130)
             {
@@ -85,13 +81,46 @@ namespace IPR2Client
 
             if (_isMan)
             {
-
+                vo2 = ((174.2 * wattage + 4020) / (103.2 * averageHeartRate - 6299));
             }
             else
             {
+                vo2 = ((163.8 * wattage + 3780) / (104.4 * averageHeartRate - 7514));
+            }
 
+            if(_age > 30)
+            {
+                vo2 = vo2 * factor;
             }
             return vo2;
+        }
+
+        private int getHeartRate(List<int> heartRates)
+        {
+            int lowestHeartRate = maxHeartRate;
+            int highestHeartRate = 0;
+            for(int i = 2; i < heartRates.Count; i++)
+            {
+                if(heartRates[i] < lowestHeartRate)
+                {
+                    lowestHeartRate = heartRates[i];
+                }
+                if(heartRates[i] > highestHeartRate)
+                {
+                    highestHeartRate = heartRates[i];
+                }
+            }
+            if(highestHeartRate - lowestHeartRate > 5)
+            {
+                return (heartRates[0] + heartRates[1]) / 2;
+            }
+            return (highestHeartRate + lowestHeartRate) / 2;
+
+        }
+
+        public void getSpoofData(string name) {
+            double vo2 = ((174.2 * 150 + 4020) / (103.2 * 135 - 6299));
+            Login.Handler.SendVo2(name, vo2);
         }
     }
 }
