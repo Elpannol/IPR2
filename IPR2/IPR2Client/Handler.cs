@@ -153,7 +153,7 @@ namespace IPR2Client
             }
         }
 
-        public List<String> getLog(string name, string training)
+        public dynamic getLog(string name, string training)
         {
             try
             {
@@ -168,12 +168,7 @@ namespace IPR2Client
                 });
 
                 dynamic message = JsonConvert.DeserializeObject(ReadMessage());
-                List<string> log = new List<string>();
-                for (int i = 0; i < message.data.log.Count; i++)
-                {
-                    log.Add((string)message.data.log[i]);
-                }
-                return log;
+                return message;
             }
             catch(Exception e)
             {
@@ -182,7 +177,7 @@ namespace IPR2Client
             }
         }
 
-        public int GetAge(string gebruikersnaam)
+        public dynamic GetAge(string gebruikersnaam)
         {
             try
             {
@@ -195,14 +190,34 @@ namespace IPR2Client
                     }
                 };
                 SendMessage(message);
-                dynamic ageMessage = JsonConvert.DeserializeObject(ReadMessage());
-                var age = (int) ageMessage.data.age;
-                return age;
+                return JsonConvert.DeserializeObject(ReadMessage());
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception.StackTrace);
                 return -1;
+            }
+        }
+
+        public void SendVo2(string clientName ,double vo2)
+        {
+            try
+            {
+                dynamic message = new
+                {
+                    id = "send/v02",
+                    data = new
+                    {
+                        vo2 = vo2,
+                        name = clientName
+                    }
+                };
+                SendMessage(message);
+                ReadMessage();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.StackTrace);
             }
         }
     

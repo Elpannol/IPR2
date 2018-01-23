@@ -18,8 +18,10 @@ namespace IPR2Client.Forms
 
         private AddTraining _addTraining;
         public List<Measurement> measurements;
+        private List<int> heartRates;
 
         public int _age;
+        public bool _isMan;
         public int currentPower;
         public TrainingState state;
         public TrainingChooser chooser;
@@ -29,7 +31,10 @@ namespace IPR2Client.Forms
             this.results = results;
             InitializeComponent();
             FormClosing += NewTest_FormClosing;
-            _age = Login.Handler.GetAge(name);
+
+            var message = Login.Handler.GetAge(name);
+            _age = (int)message.data.age;
+            _isMan = (bool)message.data.isman;
 
             // Create a connection to the bike using the simulator.
             this.connection = new BicycleConnection(name);
@@ -60,7 +65,7 @@ namespace IPR2Client.Forms
             measurements = new List<Measurement>();
             _name = name;
             _addTraining = addTraining;
-            chooser = new TrainingChooser(_age);
+            chooser = new TrainingChooser(_age, _isMan);
 
             // Start the timer
             timer1 = new Timer();
@@ -154,7 +159,17 @@ namespace IPR2Client.Forms
                         if(meas.Time.Minutes == 7)
                         {
                             state = TrainingState.STOP;
-                            setWarning("End of the training reached");
+                            double vo2 = chooser.CalculateVo2(heartRates);
+                            if (vo2 == -1)
+                            {
+                                setWarning("Can't calculate vo2, average heartrate too low");
+                                Login.Handler.SendVo2(Name, vo2);
+                            }
+                            else
+                            {
+                                setWarning($"Vo2 calculated: {vo2:00}");
+                                Login.Handler.SendVo2(Name, vo2);
+                            }
                         }
                         break;
                     case TrainingState.STOP:
@@ -179,7 +194,6 @@ namespace IPR2Client.Forms
         {
             if (meas.Hartslag > chooser.maxHeartRate)
             {
-                //TODO: add warning for this
                 state = TrainingState.STOP;
                 setWarning("WANRING: Heartrate too high");
 
@@ -190,6 +204,7 @@ namespace IPR2Client.Forms
                 connection.EnableCommand();
                 connection.ChangePower($"{currentPower}");
             }
+            heartRates.Add(meas.Hartslag);
 
         }
 
@@ -269,11 +284,6 @@ namespace IPR2Client.Forms
                 tempMeasurement.Time.ToString());
 
             return tempMeasurement;
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

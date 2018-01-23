@@ -15,6 +15,7 @@ namespace IPR2
         public bool IsDoctor { get; set; }
         public int Age { get; set; }
         public Log Log { get; set; }
+        public bool isMan { get; set; }
         [JsonProperty("Trainingen")]
         public List<Training> Traingingen { get; set; }
 
@@ -29,7 +30,7 @@ namespace IPR2
             Server.DataBase.SaveClient(this);
         }
 
-        public Client(string name, string password, int age)
+        public Client(string name, string password, int age, bool isMan)
         {
             Traingingen = new List<Training>();
             Name = name;
@@ -37,11 +38,12 @@ namespace IPR2
             Age = age;
             IsDoctor = false;
             Log = new Log($"{name} log");
+            this.isMan = isMan;
             Server.DataBase.SaveClient(this);
         }
 
         [JsonConstructor]
-        public Client(string name, string password, bool isDoctor,  int age, Log log, List<Training> trainingen)
+        public Client(string name, string password, bool isDoctor,  int age, Log log, List<Training> trainingen, bool isman)
         {
             Name = name;
             Password = password;
@@ -49,6 +51,7 @@ namespace IPR2
             Log = log;
             Traingingen = trainingen;
             Age = age;
+            isMan = isman;
         }
 
         public void AddTraining()
@@ -60,7 +63,8 @@ namespace IPR2
         {
             string text = $"Name: {Name}\n" +
                           $"Is Doctor: {IsDoctor}" +
-                          $"Age: {Age}";
+                          $"Age: {Age}" +
+                          $"Isman: {isMan}";
             return text;
         }
 
@@ -77,6 +81,7 @@ namespace IPR2
                 password = Password,
                 age = Age,
                 isdoctor = IsDoctor,
+                isman = isMan
             };
             return data;
         }

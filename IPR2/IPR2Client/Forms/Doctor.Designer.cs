@@ -37,6 +37,7 @@
             this.userListBox = new System.Windows.Forms.ListBox();
             this.loginLabel = new System.Windows.Forms.Label();
             this.measurmentChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.warningLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.measurmentChart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -74,7 +75,6 @@
             this.loginLabel.Size = new System.Drawing.Size(196, 20);
             this.loginLabel.TabIndex = 17;
             this.loginLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.loginLabel.Click += new System.EventHandler(this.loginLabel_Click);
             // 
             // measurmentChart
             // 
@@ -100,13 +100,24 @@
             this.measurmentChart.Size = new System.Drawing.Size(1107, 300);
             this.measurmentChart.TabIndex = 18;
             this.measurmentChart.Text = "chart1";
-            this.measurmentChart.Click += new System.EventHandler(this.measurmentChart_Click);
+            // 
+            // warningLabel
+            // 
+            this.warningLabel.AutoSize = true;
+            this.warningLabel.ForeColor = System.Drawing.Color.Red;
+            this.warningLabel.Location = new System.Drawing.Point(12, 185);
+            this.warningLabel.Name = "warningLabel";
+            this.warningLabel.Size = new System.Drawing.Size(69, 13);
+            this.warningLabel.TabIndex = 19;
+            this.warningLabel.Text = "warning label";
+            this.warningLabel.Visible = false;
             // 
             // Doctor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1411, 333);
+            this.Controls.Add(this.warningLabel);
             this.Controls.Add(this.measurmentChart);
             this.Controls.Add(this.loginLabel);
             this.Controls.Add(this.userListBox);
@@ -120,6 +131,7 @@
             this.Text = "CG Fit";
             ((System.ComponentModel.ISupportInitialize)(this.measurmentChart)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -129,5 +141,6 @@
         private System.Windows.Forms.ListBox userListBox;
         private System.Windows.Forms.Label loginLabel;
         private System.Windows.Forms.DataVisualization.Charting.Chart measurmentChart;
+        private System.Windows.Forms.Label warningLabel;
     }
 }

@@ -64,7 +64,8 @@ namespace IPR2
                                 id = "recieve/age",
                                 data = new
                                 {
-                                    age = (int)client.Age
+                                    age = (int)client.Age,
+                                    isman = (bool)client.isMan
                                 }
                             });
                         break;
@@ -107,6 +108,10 @@ namespace IPR2
                         AddMeasurementToLog(message);
                         SendAck();
                         break;
+                    case "send/vo2":
+                        AddVo2ToTraining(message);
+                        SendAck();
+                        break;
                     case "send/log":
                         SendMessage(new
                         {
@@ -121,6 +126,7 @@ namespace IPR2
                         Training training = Server.DataBase.SearchForClient((string)message.data.name).getTraining((string)message.data.training);
 
                         SendMessage(new {
+                                vo2 = training._vo2,
                                 data = new
                                 {
                                     log = training._measurements.Select(m => m.ToRawData()).ToArray()
@@ -179,6 +185,20 @@ namespace IPR2
             Client.GetStream().Write(bytes, 0, bytes.Length);
             Client.GetStream().Flush();
 
+        }
+
+        private void AddVo2ToTraining(dynamic message)
+        {
+            try
+            {
+                var trainingen = Server.DataBase.SearchForClient((string)message.data.name).Traingingen;
+                trainingen.ElementAt(trainingen.Count - 1)._vo2 = (double)message.data.vo2;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
         }
 
         private void AddMeasurementToLog(dynamic variables)
