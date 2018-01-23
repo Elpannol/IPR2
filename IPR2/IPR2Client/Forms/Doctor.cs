@@ -72,7 +72,8 @@ namespace IPR2Client.Forms
                 measurmentChart.ChartAreas[0].AxisX.Interval = 15;
 
                 measurmentChart.Series["Heartrate"].Points.AddXY(totalTime, meas.Hartslag);
-                measurmentChart.Series["Rondes"].Points.AddXY(totalTime,  meas.Rondes);
+                measurmentChart.Series["Rondes"].Points.AddXY(totalTime, meas.Rondes);
+                measurmentChart.Series["Wattage"].Points.AddXY(totalTime, meas.Weerstand);
              }
 
         }

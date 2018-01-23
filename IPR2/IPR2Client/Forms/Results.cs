@@ -70,7 +70,6 @@ namespace IPR2Client.Forms
         }
 
         private void newTestButton_Click(object sender, EventArgs e) {
-            Visible = false;
             Login.Handler.StartTraining();
 
             if (comportBox.SelectedItem?.ToString() == "Simulation" || comportBox.SelectedItem?.ToString() == null)
@@ -84,11 +83,13 @@ namespace IPR2Client.Forms
 
                 newTest = new NewTest(_gebruikersnaam, this, serialPort, AddTraining);
             }
+            Visible = false;
             newTest.Visible = true;
         }
 
         private void trainingListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            setWarning("");
             currentTraining = trainingen[trainingListBox.SelectedIndex];
             currentMeasurement = currentTraining.getMeasurement(0);
             if (currentMeasurement == null) {
@@ -97,8 +98,16 @@ namespace IPR2Client.Forms
                 return;
             }
 
+            if(currentTraining.vo2 == -1)
+            {
+                setWarning("Vo2 could not be calculated!!");
+            }
+            else
+            {
+                setWarning($"Vo2 calculated: {currentTraining.vo2:##.00}");
+            }
 
-            weerstandLabel.Text = "" +currentMeasurement.Weerstand;
+            weerstandLabel.Text = "" +currentMeasurement.Weerstand; 
             hartslagLabel.Text = "" + currentMeasurement.Hartslag;
             rondesLabel.Text = "" + currentMeasurement.Rondes;
             tijdLabel.Text = currentMeasurement.Time.ToString();
@@ -142,6 +151,11 @@ namespace IPR2Client.Forms
                 Console.WriteLine("Stupid slider exception!");
                 //Console.WriteLine(exception.StackTrace);
             }
+        }
+        private void setWarning(string text)
+        {
+            warningLabel.Visible = true;
+            warningLabel.Text = text;
         }
     }
 }

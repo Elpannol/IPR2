@@ -32,6 +32,7 @@
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Doctor));
             this.trainingListBox = new System.Windows.Forms.ListBox();
             this.userListBox = new System.Windows.Forms.ListBox();
@@ -95,8 +96,14 @@
             series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             series2.Legend = "Legend1";
             series2.Name = "Rondes";
+            series3.BorderWidth = 3;
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Legend = "Legend1";
+            series3.Name = "Wattage";
             this.measurmentChart.Series.Add(series1);
             this.measurmentChart.Series.Add(series2);
+            this.measurmentChart.Series.Add(series3);
             this.measurmentChart.Size = new System.Drawing.Size(1107, 300);
             this.measurmentChart.TabIndex = 18;
             this.measurmentChart.Text = "chart1";

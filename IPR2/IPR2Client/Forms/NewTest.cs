@@ -32,16 +32,10 @@ namespace IPR2Client.Forms
             InitializeComponent();
             FormClosing += NewTest_FormClosing;
 
-            heartRates = new List<int>();
-            var message = Login.Handler.GetAge(name);
-            _age = (int)message.data.age;
-            _isMan = (bool)message.data.isman;
-
             // Create a connection to the bike using the simulator.
             this.connection = new BicycleConnection(name);
             // Initialise the rest of the attributes and start the timer
             this.Initialise(name, addTraining);
-            state = TrainingState.START;
         }
 
         public NewTest(string name, Results results, SerialPort serialPort, AddTraining addTraining)
@@ -61,12 +55,18 @@ namespace IPR2Client.Forms
          */
         private void Initialise(string name, AddTraining addTraining) {
             // Some needed attributes
+
             currentPower = 20;
             measurements = new List<Measurement>();
             _name = name;
             _addTraining = addTraining;
+
+            heartRates = new List<int>();
+            var message = Login.Handler.GetAge(name);
+            _age = (int)message.data.age;
+            _isMan = (bool)message.data.isman;
             chooser = new TrainingChooser(_age, _isMan);
-            chooser.getSpoofData(_name);
+            state = TrainingState.START;
 
             // Start the timer
             timer1 = new Timer();
@@ -84,8 +84,8 @@ namespace IPR2Client.Forms
             try
             {
                 //Changed the write and read line to send and receive command
-                Console.WriteLine("Sending");
                 connection.StartBicycle();
+                Console.WriteLine("Sending");
 
                 Measurement meas = null;
                 if (state != TrainingState.STOP)
@@ -119,8 +119,10 @@ namespace IPR2Client.Forms
                         }
                         break;
                     case TrainingState.REALTEST:
-
-                        checkPower(meas);
+                        if (meas.Time.Seconds % 5 == 0)
+                        {
+                            checkPower(meas);
+                        }
 
                         if(meas.Time.Minutes == 5)
                         {
@@ -141,17 +143,6 @@ namespace IPR2Client.Forms
                         if(meas.Time.Minutes == 6)
                         {
                             state = TrainingState.COOLINGDOWN;
-                        }
-                        break;
-                    case TrainingState.COOLINGDOWN:
-                        if (meas.Time.Seconds % 15 == 0)
-                        {
-                            heartRates.Add(meas.Hartslag);
-                        }
-
-                        if(meas.Time.Minutes == 7)
-                        {
-                            state = TrainingState.STOP;
                             double vo2 = chooser.CalculateVo2(heartRates, currentPower);
                             if (vo2 == -1)
                             {
@@ -163,6 +154,17 @@ namespace IPR2Client.Forms
                                 setWarning($"Vo2 calculated: {vo2:##.00}");
                                 Login.Handler.SendVo2(Name, vo2);
                             }
+                        }
+                        break;
+                    case TrainingState.COOLINGDOWN:
+                        if (meas.Time.Seconds % 15 == 0)
+                        {
+                            heartRates.Add(meas.Hartslag);
+                        }
+
+                        if(meas.Time.Minutes == 7)
+                        {
+                            state = TrainingState.STOP;
                         }
                         break;
                     case TrainingState.STOP:
@@ -221,7 +223,8 @@ namespace IPR2Client.Forms
 
         private void NewTest_FormClosing(object sender, FormClosingEventArgs e)
         {
-
+            
+            connection.ResetBicycle();
             connection.Close();
 
             if(timer1 != null)
