@@ -33,19 +33,30 @@ namespace IPR2Client.Forms
             Application.Exit();
         }
 
-        private void timeTrackBar_Scroll(object sender, EventArgs e)
-        {
-            try
-            {
-            }
-            catch (Exception exception) { }
-        }
-
         private void trainingListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            log = Login.Handler.getLog(selectedName, trainingListBox.GetItemText(trainingListBox.SelectedItem));
+            foreach (var series in measurmentChart.Series)
+            {
+                series.Points.Clear();
+            }
+            var message = Login.Handler.getLog(selectedName, trainingListBox.GetItemText(trainingListBox.SelectedItem));
+            log = new List<string>();
+            for (int i = 0; i < message.data.log.Count; i++)
+            {
+                log.Add((string)message.data.log[i]);
+            }
             Training training = trainingen[trainingListBox.SelectedIndex];
+            training.vo2 = (double)message.vo2;
             training._measurements = new List<Measurement>();
+
+            if(training.vo2 == -1)
+            {
+                setWarning("Vo2 could not be calculated!!");
+            }
+            else
+            {
+                setWarning($"Vo2 calculated: {training.vo2:##.00}");
+            }
 
             foreach(String s in log)
             {
@@ -74,7 +85,7 @@ namespace IPR2Client.Forms
             {
                 trainingen.Add(new Training(new List<Measurement>(), s));
             }
-            selectedName = users[userListBox.SelectedIndex];
+            selectedName = userListBox.GetItemText(userListBox.SelectedItem);
             fillTrianingBox();
         }
 
@@ -114,14 +125,10 @@ namespace IPR2Client.Forms
             }
         }
 
-        private void measurmentChart_Click(object sender, EventArgs e)
+        private void setWarning(string text)
         {
-
-        }
-
-        private void loginLabel_Click(object sender, EventArgs e)
-        {
-
+            warningLabel.Visible = true;
+            warningLabel.Text = text;
         }
     }
 }

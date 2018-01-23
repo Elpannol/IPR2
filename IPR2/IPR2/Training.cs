@@ -13,6 +13,7 @@ namespace IPR2
         [JsonProperty("_measurements")]
         public List<Measurement> _measurements { get; set; }
         public string _name { get; set; }
+        public double _vo2 { get; set; } = -1;
 
         public Training(string name)
         {
@@ -21,10 +22,11 @@ namespace IPR2
         }
 
         [JsonConstructor]
-        public Training(List<Measurement> measurements, string name)
+        public Training(List<Measurement> measurements, string name, double vo2)
         {
             _measurements = measurements;
             _name = name;
+            _vo2 = vo2;
         }
 
         public void AddMeasurement(Measurement mes)

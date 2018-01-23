@@ -42,8 +42,14 @@ namespace IPR2Client.Forms
 
             foreach(Training t in trainingen)
             {
-                var log = Login.Handler.getLog(_gebruikersnaam, t._name);
-            
+                var message = Login.Handler.getLog(_gebruikersnaam, t._name);
+                t.vo2 = (double)message.vo2;
+                List<string> log = new List<string>();
+                for (int i = 0; i < message.data.log.Count; i++)
+                {
+                    log.Add((string)message.data.log[i]);
+                }
+
                 foreach (String s in log)
                 {
                     var list = s.Split();

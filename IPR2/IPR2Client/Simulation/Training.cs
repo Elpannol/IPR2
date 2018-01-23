@@ -11,8 +11,7 @@ namespace IPR2Client.Simulation
         public List<Measurement> _measurements { get; set; }
         public readonly string _name;
 
-        public int maxPower;
-        public int maxPulse;
+        public double vo2;
 
         public Training(List<Measurement> measurements, string name)
         {

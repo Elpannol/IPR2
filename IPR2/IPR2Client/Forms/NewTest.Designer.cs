@@ -62,7 +62,6 @@
             this.label1.Size = new System.Drawing.Size(84, 18);
             this.label1.TabIndex = 14;
             this.label1.Text = "Weerstand:";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // label2
             // 

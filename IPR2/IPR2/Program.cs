@@ -142,7 +142,43 @@ namespace IPR2
                     }
                 
                 }
-                Server.DataBase.AddClient(new Client(name,password,age));
+                bool isman = true;
+                Console.WriteLine("Are you a man or a woman? [m/w]");
+                string textMan = Console.ReadLine();
+                while (true)
+                {
+                    if (textMan.ToLower().Equals("m") || textMan.ToLower().Equals("man"))
+                    {
+                        break;
+                    }
+                    else if (textMan.ToLower().Equals("w") || textMan.ToLower().Equals("woman"))
+                    {
+                        isman = false;
+                        break;
+                    }
+                    else
+                    {
+                        Console.Write("Wrong command");
+                        Console.Write("Continue? [y/n]");
+                        string answer = Console.ReadLine();
+                        if (answer.Equals("y"))
+                        {
+                            textAge = Console.ReadLine();
+                            continue;
+                        }
+                        else if (answer.Equals("n"))
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Command not recognised");
+                            continue;
+                        }
+                    }
+
+                }
+                Server.DataBase.AddClient(new Client(name,password,age, isman));
             }
                         
                     
