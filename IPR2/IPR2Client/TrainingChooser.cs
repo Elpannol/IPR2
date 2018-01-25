@@ -11,7 +11,7 @@ namespace IPR2Client
         private int _age;
         private bool _isMan;
         private double factor;
-        public int maxHeartRate;
+        public int maxHeartRate = 210;
 
         public TrainingChooser(int age, bool isman)
         {
@@ -22,12 +22,7 @@ namespace IPR2Client
 
         public void checkRate()
         {
-            if(_age >= 15 && _age < 25)
-            {
-                maxHeartRate = 210;
-                factor = 1.1;
-            }
-            else if (_age >= 25 && _age < 35)
+            if (_age >= 25 && _age < 35)
             {
                 maxHeartRate = 200;
                 factor = 1;

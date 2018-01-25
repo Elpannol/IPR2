@@ -39,6 +39,7 @@
             this.rondesLabel = new System.Windows.Forms.Label();
             this.hartslagLabel = new System.Windows.Forms.Label();
             this.warningLabel = new System.Windows.Forms.Label();
+            this.TrainingStateLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -145,11 +146,21 @@
             this.warningLabel.Text = "Warning!!";
             this.warningLabel.Visible = false;
             // 
+            // TrainingStateLabel
+            // 
+            this.TrainingStateLabel.AutoSize = true;
+            this.TrainingStateLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TrainingStateLabel.Location = new System.Drawing.Point(247, 140);
+            this.TrainingStateLabel.Name = "TrainingStateLabel";
+            this.TrainingStateLabel.Size = new System.Drawing.Size(0, 18);
+            this.TrainingStateLabel.TabIndex = 23;
+            // 
             // NewTest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(398, 166);
+            this.Controls.Add(this.TrainingStateLabel);
             this.Controls.Add(this.warningLabel);
             this.Controls.Add(this.tijdLabel);
             this.Controls.Add(this.rondesLabel);
@@ -183,5 +194,6 @@
         private System.Windows.Forms.Label rondesLabel;
         private System.Windows.Forms.Label hartslagLabel;
         private System.Windows.Forms.Label warningLabel;
+        private System.Windows.Forms.Label TrainingStateLabel;
     }
 }

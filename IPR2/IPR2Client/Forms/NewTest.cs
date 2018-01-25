@@ -13,6 +13,7 @@ namespace IPR2Client.Forms
         private BicycleConnection connection;
 
         private string _name;
+        private int _interval;
         private Results results;
         private Timer timer1;
 
@@ -31,11 +32,13 @@ namespace IPR2Client.Forms
             this.results = results;
             InitializeComponent();
             FormClosing += NewTest_FormClosing;
+            _interval = 1000;
+            TrainingStateLabel.Text = "Start";
 
             // Create a connection to the bike using the simulator.
-            this.connection = new BicycleConnection(name);
+            connection = new BicycleConnection(name);
             // Initialise the rest of the attributes and start the timer
-            this.Initialise(name, addTraining);
+            Initialise(name, addTraining);
         }
 
         public NewTest(string name, Results results, SerialPort serialPort, AddTraining addTraining)
@@ -44,10 +47,13 @@ namespace IPR2Client.Forms
             InitializeComponent();
             FormClosing += NewTest_FormClosing;
 
+            //TODO: change this if it makes the bicycle buffer fucked up
+            _interval = 1000;
+
             // Create a connection to the real bike using the port.
-            this.connection = new BicycleConnection(serialPort);
+            connection = new BicycleConnection(serialPort);
             // Initialise the rest of the attributes and start the timer
-            this.Initialise(name, addTraining);
+            Initialise(name, addTraining);
         }
 
         /**
@@ -71,7 +77,7 @@ namespace IPR2Client.Forms
             // Start the timer
             timer1 = new Timer();
             timer1.Tick += new EventHandler(React);
-            timer1.Interval = 1000;
+            timer1.Interval = _interval;
             timer1.Start();
         }
 
@@ -102,6 +108,7 @@ namespace IPR2Client.Forms
                         {
                             return;
                         }
+                        TrainingStateLabel.Text = "Warming up";
                         state = TrainingState.WARMINGUP;
                         break;
                     case TrainingState.WARMINGUP:
@@ -116,6 +123,7 @@ namespace IPR2Client.Forms
                             currentPower = 50;
                             connection.ChangePower($"{currentPower}");
                             state = TrainingState.REALTEST;
+                            TrainingStateLabel.Text = "Test";
                         }
                         break;
                     case TrainingState.REALTEST:
@@ -142,28 +150,30 @@ namespace IPR2Client.Forms
 
                         if(meas.Time.Minutes == 6)
                         {
+                            TrainingStateLabel.Text = "Cooling down";
                             state = TrainingState.COOLINGDOWN;
                             double vo2 = chooser.CalculateVo2(heartRates, currentPower);
                             if (vo2 == -1)
                             {
                                 setWarning("Can't calculate vo2, average heartrate too low");
-                                Login.Handler.SendVo2(Name, vo2);
+                                Login.Handler.SendVo2(_name, vo2);
                             }
                             else
                             {
                                 setWarning($"Vo2 calculated: {vo2:##.00}");
-                                Login.Handler.SendVo2(Name, vo2);
+                                Login.Handler.SendVo2(_name, vo2);
                             }
+
+                            if (currentPower > 100) currentPower -= 50;
+                            else currentPower = 50;
+                            connection.EnableCommand();
+                            connection.ChangePower($"{currentPower}");
                         }
                         break;
                     case TrainingState.COOLINGDOWN:
-                        if (meas.Time.Seconds % 15 == 0)
-                        {
-                            heartRates.Add(meas.Hartslag);
-                        }
-
                         if(meas.Time.Minutes == 7)
                         {
+                            TrainingStateLabel.Text = "Test stop";
                             state = TrainingState.STOP;
                         }
                         break;
@@ -184,13 +194,14 @@ namespace IPR2Client.Forms
             if (meas.Hartslag > chooser.maxHeartRate)
             {
                 state = TrainingState.STOP;
+                TrainingStateLabel.Text = "Test stop";
                 setWarning("WANRING: Heartrate too high");
 
             }
             else if (meas.Hartslag <= 130)
             {
-                if (_isMan) currentPower = currentPower + 50;
-                else currentPower = currentPower + 25;
+                if (_isMan) currentPower += 50;
+                else currentPower += 25;
 
                 connection.EnableCommand();
                 connection.ChangePower($"{currentPower}");
@@ -199,15 +210,15 @@ namespace IPR2Client.Forms
             {
                 if (meas.Rondes < 50)
                 {
-                    if (_isMan) currentPower = currentPower + 25;
-                    else currentPower = currentPower + 12;
+                    if (_isMan) currentPower += 25;
+                    else currentPower += 12;
                     connection.EnableCommand();
                     connection.ChangePower($"{currentPower}");
                 }
                 else if (meas.Rondes > 60)
                 {
-                    if (_isMan) currentPower = currentPower - 25;
-                    else currentPower = currentPower - 12;
+                    if (_isMan) currentPower -= 25;
+                    else currentPower -= 12;
                     connection.EnableCommand();
                     connection.ChangePower($"{currentPower}");
                 }
@@ -291,11 +302,25 @@ namespace IPR2Client.Forms
                 Login.Handler.ReadMessage();
             }
 
+            int minusTime = 0;
+            switch (state)
+            {
+                case TrainingState.REALTEST:
+                    minusTime = 2;
+                    break;
+                case TrainingState.COOLINGDOWN:
+                    minusTime = 6;
+                    break;
+
+            }
+
+            string time = $"{tempMeasurement.Time.Minutes - minusTime:00}:{tempMeasurement.Time.Seconds:00}";
+
             // Update simply changes the text fields.
             update(tempMeasurement.Weerstand.ToString(),
                 tempMeasurement.Hartslag.ToString(),
                 tempMeasurement.Rondes.ToString(),
-                tempMeasurement.Time.ToString());
+                time);
 
             return tempMeasurement;
         }

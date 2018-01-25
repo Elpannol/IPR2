@@ -1,10 +1,6 @@
 ﻿using IPR2Client.Forms;
 using System;
-using System.Collections.Generic;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IPR2Client
 {
@@ -17,16 +13,16 @@ namespace IPR2Client
 
         public BicycleConnection(SerialPort serialPort) {
             this.serialPort = serialPort;
-            this.isSimulating = false;
+            isSimulating = false;
         }
 
         public BicycleConnection (string name) {
             // Create a connection using the simulator
-            this.simulator = new Simulator(name)
+            simulator = new Simulator(name)
             {
                 Visible = true
             };
-            this.isSimulating = true;
+            isSimulating = true;
         }
 
         public void StartBicycle()
@@ -79,10 +75,10 @@ namespace IPR2Client
          * Close the connection to either the simulator or the bike.
          */
         public void Close() {
-            if (this.isSimulating) {
+            if (isSimulating) {
                 simulator.Dispose();
             } else {
-
+                serialPort.Close();
             }
         }
 
