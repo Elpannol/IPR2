@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace IPR2
@@ -12,10 +13,13 @@ namespace IPR2
     {
         public TcpClient Client { get; set; }
         private string _name;
+        public Thread ClientThread;
 
         public ClientHandler(TcpClient client)
         {
             Client = client;
+            ClientThread = new Thread(HandleClientThread);
+            ClientThread.Start();
         }
 
         public void HandleClientThread()
@@ -23,6 +27,11 @@ namespace IPR2
             do
             {
                 dynamic message = JsonConvert.DeserializeObject(ReadMessage(Client));
+                if (message == null)
+                {
+                    Console.WriteLine($"{_name} died!!");
+                    return;
+                }
                 switch ((string) message.id)
                 {
                     case "check/client":
@@ -165,25 +174,38 @@ namespace IPR2
 
         public dynamic ReadMessage(TcpClient client)
         {
-            byte[] buffer = new byte[1028];
-            int totalRead = 0;
-            do
+            try
             {
-                int read = client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
-                totalRead += read;
-            } while (client.GetStream().DataAvailable);
-            dynamic message = Encoding.Unicode.GetString(buffer, 0, totalRead);
-            return message;
-
+                byte[] buffer = new byte[1028];
+                int totalRead = 0;
+                do
+                {
+                    int read = client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
+                    totalRead += read;
+                } while (client.GetStream().DataAvailable);
+                dynamic message = Encoding.Unicode.GetString(buffer, 0, totalRead);
+                return message;
+            }
+            catch (Exception e)
+            {
+                ClientSepukku();
+            }
+            return "Client died";
         }
 
         public void SendMessage(dynamic message)
         {
-            //make sure the other end decodes with the same format!
-            message = JsonConvert.SerializeObject(message);
-            byte[] bytes = Encoding.Unicode.GetBytes(message);
-            Client.GetStream().Write(bytes, 0, bytes.Length);
-            Client.GetStream().Flush();
+            try
+            {
+                //make sure the other end decodes with the same format!
+                message = JsonConvert.SerializeObject(message);
+                byte[] bytes = Encoding.Unicode.GetBytes(message);
+                Client.GetStream().Write(bytes, 0, bytes.Length);
+                Client.GetStream().Flush();
+            }
+            catch(Exception e)
+            {
+            }
 
         }
 
@@ -257,12 +279,14 @@ namespace IPR2
             Server.Handlers.Remove(client);
         }
 
-        private void ClientSepukku()
+        public void ClientSepukku()
         {
             //When you dishonor the family
             Client.GetStream().Close();
             Client.Close();
             Server.Handlers.Remove(this);
+            ClientThread.Interrupt();
+            ClientThread.Abort();
         }
 
         private static TcpClient SearchForName(string name)

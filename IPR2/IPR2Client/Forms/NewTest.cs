@@ -8,6 +8,7 @@ using System.Windows.Forms;
 namespace IPR2Client.Forms
 {
     public delegate void AddTraining(Training training);
+    delegate void StringArgReturningVoidDelegate(Label box, string text);
 
     public partial class NewTest : Form
     {
@@ -47,6 +48,7 @@ namespace IPR2Client.Forms
             this.results = results;
             InitializeComponent();
             FormClosing += NewTest_FormClosing;
+            TrainingStateLabel.Text = "Start";
 
             //TODO: change this if it makes the bicycle buffer fucked up
             _interval = 1000;
@@ -93,12 +95,10 @@ namespace IPR2Client.Forms
                     bool giveMeas = true;
                     //Changed the write and read line to send and receive command
                     connection.StartBicycle();
-                    Console.WriteLine("Sending");
 
                     Measurement meas = null;
                     if (state != TrainingState.STOP)
                     {
-                        Console.WriteLine("Reading...");
                         var temp = connection.ReceiveCommand();
                         if (temp == "RUN\r")
                         {
@@ -115,7 +115,7 @@ namespace IPR2Client.Forms
                                 giveMeas = false;
                                 break;
                             }
-                            TrainingStateLabel.Text = "Warming up";
+                            SetText(TrainingStateLabel, "Warming up");
                             state = TrainingState.WARMINGUP;
                             connection.EnableCommand();
                             connection.ChangePower($"{currentPower}");
@@ -130,7 +130,7 @@ namespace IPR2Client.Forms
                                 currentPower = 50;
                                 connection.ChangePower($"{currentPower}");
                                 state = TrainingState.REALTEST;
-                                TrainingStateLabel.Text = "Test";
+                                SetText(TrainingStateLabel, "Test");
                             }
                             break;
                         case TrainingState.REALTEST:
@@ -157,7 +157,7 @@ namespace IPR2Client.Forms
 
                             if (meas.Time.Minutes == 6)
                             {
-                                TrainingStateLabel.Text = "Cooling down";
+                                SetText(TrainingStateLabel, "Cooling down");
                                 state = TrainingState.COOLINGDOWN;
                                 double vo2 = chooser.CalculateVo2(heartRates, currentPower);
                                 if (vo2 == -1)
@@ -180,7 +180,7 @@ namespace IPR2Client.Forms
                         case TrainingState.COOLINGDOWN:
                             if (meas.Time.Minutes == 7)
                             {
-                                TrainingStateLabel.Text = "Test stop";
+                                SetText(TrainingStateLabel, "Test stop");
                                 state = TrainingState.STOP;
                             }
                             break;
@@ -205,7 +205,7 @@ namespace IPR2Client.Forms
             if (meas.Hartslag > chooser.maxHeartRate)
             {
                 state = TrainingState.STOP;
-                TrainingStateLabel.Text = "Test stop";
+                SetText(TrainingStateLabel, "Test stop");
                 setWarning("WANRING: Heartrate too high");
 
             }
@@ -239,7 +239,7 @@ namespace IPR2Client.Forms
         private void setWarning(string text)
         {
             warningLabel.Visible = true;
-            warningLabel.Text = text;
+            SetText(warningLabel, "Warming up");
         }
 
 
@@ -270,10 +270,10 @@ namespace IPR2Client.Forms
          */
         public void update(string weerstand, string hartslag, string rondes, string tijd)
         {
-            weerstandLabel.Text = $"{weerstand} Watt";
-            hartslagLabel.Text = $"{hartslag} BPM";
-            rondesLabel.Text = $"{rondes} RPM";
-            tijdLabel.Text = $"{tijd} Minuten";
+            SetText(weerstandLabel, $"{weerstand} Watt");
+            SetText(hartslagLabel, $"{hartslag} BPM");
+            SetText(rondesLabel, $"{rondes} BPM");
+            SetText(tijdLabel, $"{tijd} Minuten");
         }
 
         /**
@@ -335,6 +335,19 @@ namespace IPR2Client.Forms
                 time);
 
             return tempMeasurement;
+        }
+
+        private void SetText(Label label, string text)
+        {
+            if (label.InvokeRequired)
+            {
+                StringArgReturningVoidDelegate d = new StringArgReturningVoidDelegate(SetText);
+                this.Invoke(d, new object[] { label, text });
+            }
+            else
+            {
+                label.Text = text;
+            }
         }
     }
 }

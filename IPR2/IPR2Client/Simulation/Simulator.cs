@@ -67,10 +67,6 @@ namespace IPR2Client.Forms
             return measurement.ToRawData();
         }
 
-        public void Write(string command) {
-            // TODO: Handle commands (is this even usefull?)
-        }
-
         public Measurement UpdateSim()
         {
             if(Measurement.Rondes > 0)
@@ -80,10 +76,10 @@ namespace IPR2Client.Forms
                     _time++;
                     Measurement.Time = new SimpleTime(_time / 60, _time % 60);
                 }
-                tijd.Text = Measurement.Time.ToString();
+                SetText(tijd, $"{Measurement.Time.ToString()}");
             }
 
-            weerstand.Text = $"{Measurement.Weerstand}";
+            SetText(weerstand, $"{Measurement.Weerstand}");
 
             Measurement measurement = new Measurement(
                 Measurement.Weerstand,
@@ -93,6 +89,19 @@ namespace IPR2Client.Forms
             );
 
             return measurement;
+        }
+
+        private void SetText(Label label, string text)
+        {
+            if (label.InvokeRequired)
+            {
+                StringArgReturningVoidDelegate d = new StringArgReturningVoidDelegate(SetText);
+                this.Invoke(d, new object[] { label, text });
+            }
+            else
+            {
+                label.Text = text;
+            }
         }
     }
 }

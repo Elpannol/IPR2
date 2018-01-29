@@ -13,7 +13,6 @@ namespace IPR2
     {
         public static DataBase DataBase { get; set; } = new DataBase();
         public static List<ClientHandler> Handlers { get; set; }
-        public List<Thread> Threads = new List<Thread>();
 
         private readonly TcpListener _listener;
         private IPAddress _currentId;
@@ -41,9 +40,6 @@ namespace IPR2
             while (true)
             {
                 ClientHandler handler = new ClientHandler(CheckForClients(_listener));
-                Thread thread = new Thread(handler.HandleClientThread);
-                thread.Start();
-                Threads.Add(thread);
                 Handlers.Add(handler);
             }
         }
@@ -74,6 +70,8 @@ namespace IPR2
                 if(!c.Client.Connected) continue;
                 c.Client.GetStream().Close();
                 c.Client.Close();
+                c.ClientThread.Interrupt();
+                c.ClientThread.Abort();
             }
             Handlers.Clear();
         }

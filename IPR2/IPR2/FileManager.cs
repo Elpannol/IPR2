@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IPR2
 {
@@ -14,6 +11,7 @@ namespace IPR2
         public FileManager()
         {
             _filePath = @"..\..\PatientData\";
+            if (!Directory.Exists(_filePath)) Directory.CreateDirectory(_filePath);
         }
 
         public void SaveTraining(Client client)

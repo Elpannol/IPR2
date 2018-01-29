@@ -24,14 +24,9 @@ namespace IPR2
 
             Console.WriteLine("type 'help' to show available commands.");
             ConsoleLoop();
-
-            foreach (var t in server.Threads)
-            {
-                t.Interrupt();
-                t.Abort();
-            }
-            
             server.KillAllClient();
+            serverThread.Interrupt();
+            serverThread.Abort();            
 
             //murder the server
             System.Environment.Exit(1);
