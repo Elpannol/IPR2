@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace IPR2Client.Forms
@@ -15,7 +16,7 @@ namespace IPR2Client.Forms
         private string _name;
         private int _interval;
         private Results results;
-        private Timer timer1;
+        private Thread runThread;
 
         private AddTraining _addTraining;
         public List<Measurement> measurements;
@@ -59,7 +60,8 @@ namespace IPR2Client.Forms
         /**
          * Initialise attribues used by both constructors.
          */
-        private void Initialise(string name, AddTraining addTraining) {
+        private void Initialise(string name, AddTraining addTraining)
+        {
             // Some needed attributes
 
             currentPower = 20;
@@ -74,119 +76,128 @@ namespace IPR2Client.Forms
             chooser = new TrainingChooser(_age, _isMan);
             state = TrainingState.START;
 
-            // Start the timer
-            timer1 = new Timer();
-            timer1.Tick += new EventHandler(React);
-            timer1.Interval = _interval;
-            timer1.Start();
+            runThread = new Thread(React);
+            runThread.Start();
         }
 
         /**
          * During a test this function is called every 1000 ms. (so, this
          * is the from where the logic for the test should be implemented).
          */
-        private void React(object sender, EventArgs e)
+        private void React()
         {
-            try
+            while (true)
             {
-                //Changed the write and read line to send and receive command
-                connection.StartBicycle();
-                Console.WriteLine("Sending");
-
-                Measurement meas = null;
-                if (state != TrainingState.STOP)
+                try
                 {
-                    Console.WriteLine("Reading...");
-                    var temp = connection.ReceiveCommand();
-                    meas = ParseMeasurement(temp);
-                }
+                    bool giveMeas = true;
+                    //Changed the write and read line to send and receive command
+                    connection.StartBicycle();
+                    Console.WriteLine("Sending");
 
-                switch (state)
-                {
-                    case TrainingState.START:
-                        if(meas.Rondes == 0)
+                    Measurement meas = null;
+                    if (state != TrainingState.STOP)
+                    {
+                        Console.WriteLine("Reading...");
+                        var temp = connection.ReceiveCommand();
+                        if (temp == "RUN\r")
                         {
-                            return;
+                            giveMeas = false;
                         }
-                        TrainingStateLabel.Text = "Warming up";
-                        state = TrainingState.WARMINGUP;
-                        break;
-                    case TrainingState.WARMINGUP:
-                        connection.EnableCommand();
-                        connection.ChangePower($"{currentPower}");
-                        if (meas.Time.Seconds == 0)
-                        {
-                            heartRates.Add(meas.Hartslag);
-                        }
-                        if (meas.Time.Minutes == 2)
-                        {
-                            currentPower = 50;
-                            connection.ChangePower($"{currentPower}");
-                            state = TrainingState.REALTEST;
-                            TrainingStateLabel.Text = "Test";
-                        }
-                        break;
-                    case TrainingState.REALTEST:
-                        if (meas.Time.Seconds % 5 == 0)
-                        {
-                            checkPower(meas);
-                        }
+                        else meas = ParseMeasurement(temp);
+                    }
 
-                        if(meas.Time.Minutes == 5)
-                        {
-                            if (meas.Time.Seconds % 15 == 0)
+                    switch (state)
+                    {
+                        case TrainingState.START:
+                            if (meas.Rondes == 0)
                             {
-                                heartRates.Add(meas.Hartslag);
+                                giveMeas = false;
+                                break;
                             }
-                        }
-                        else
-                        {
+                            TrainingStateLabel.Text = "Warming up";
+                            state = TrainingState.WARMINGUP;
+                            connection.EnableCommand();
+                            connection.ChangePower($"{currentPower}");
+                            break;
+                        case TrainingState.WARMINGUP:
                             if (meas.Time.Seconds == 0)
                             {
                                 heartRates.Add(meas.Hartslag);
                             }
-                        }
-
-
-                        if(meas.Time.Minutes == 6)
-                        {
-                            TrainingStateLabel.Text = "Cooling down";
-                            state = TrainingState.COOLINGDOWN;
-                            double vo2 = chooser.CalculateVo2(heartRates, currentPower);
-                            if (vo2 == -1)
+                            if (meas.Time.Minutes == 2)
                             {
-                                setWarning("Can't calculate vo2, average heartrate too low");
-                                Login.Handler.SendVo2(_name, vo2);
+                                currentPower = 50;
+                                connection.ChangePower($"{currentPower}");
+                                state = TrainingState.REALTEST;
+                                TrainingStateLabel.Text = "Test";
+                            }
+                            break;
+                        case TrainingState.REALTEST:
+                            if (meas.Time.Seconds % 5 == 0)
+                            {
+                                checkPower(meas);
+                            }
+
+                            if (meas.Time.Minutes == 5)
+                            {
+                                if (meas.Time.Seconds % 15 == 0)
+                                {
+                                    heartRates.Add(meas.Hartslag);
+                                }
                             }
                             else
                             {
-                                setWarning($"Vo2 calculated: {vo2:##.00}");
-                                Login.Handler.SendVo2(_name, vo2);
+                                if (meas.Time.Seconds == 0)
+                                {
+                                    heartRates.Add(meas.Hartslag);
+                                }
                             }
 
-                            if (currentPower > 100) currentPower -= 50;
-                            else currentPower = 50;
-                            connection.EnableCommand();
-                            connection.ChangePower($"{currentPower}");
-                        }
-                        break;
-                    case TrainingState.COOLINGDOWN:
-                        if(meas.Time.Minutes == 7)
-                        {
-                            TrainingStateLabel.Text = "Test stop";
-                            state = TrainingState.STOP;
-                        }
-                        break;
-                    case TrainingState.STOP:
-                        return;
-                }
 
-                measurements.Add(meas);
+                            if (meas.Time.Minutes == 6)
+                            {
+                                TrainingStateLabel.Text = "Cooling down";
+                                state = TrainingState.COOLINGDOWN;
+                                double vo2 = chooser.CalculateVo2(heartRates, currentPower);
+                                if (vo2 == -1)
+                                {
+                                    setWarning("Can't calculate vo2, average heartrate too low");
+                                    Login.Handler.SendVo2(_name, vo2);
+                                }
+                                else
+                                {
+                                    setWarning($"Vo2 calculated: {vo2:##.00}");
+                                    Login.Handler.SendVo2(_name, vo2);
+                                }
+
+                                if (currentPower > 100) currentPower -= 50;
+                                else currentPower = 50;
+                                connection.EnableCommand();
+                                connection.ChangePower($"{currentPower}");
+                            }
+                            break;
+                        case TrainingState.COOLINGDOWN:
+                            if (meas.Time.Minutes == 7)
+                            {
+                                TrainingStateLabel.Text = "Test stop";
+                                state = TrainingState.STOP;
+                            }
+                            break;
+                        case TrainingState.STOP:
+                            giveMeas = false;
+                            break;
+                    }
+
+                    if (giveMeas) measurements.Add(meas);
+                    Thread.Sleep(1000);
+                }
+                catch (Exception exception)
+                {
+                    Thread.Sleep(1000);
+                    Console.WriteLine($"Exception! : {exception.StackTrace}");
+                }
             }
-            catch (Exception exception)
-            {
-                Console.WriteLine($"Exception! : {exception.StackTrace}");
-            }   
         }
 
         private void checkPower(Measurement meas)
@@ -230,17 +241,18 @@ namespace IPR2Client.Forms
             warningLabel.Visible = true;
             warningLabel.Text = text;
         }
-        
+
 
         private void NewTest_FormClosing(object sender, FormClosingEventArgs e)
         {
-            
+
             connection.ResetBicycle();
             connection.Close();
 
-            if(timer1 != null)
+            if (runThread != null)
             {
-                timer1.Stop();
+                runThread.Interrupt();
+                runThread.Abort();
                 Training training = new Training(measurements, _name);
                 results.AddTraining(training);
             }
@@ -259,9 +271,9 @@ namespace IPR2Client.Forms
         public void update(string weerstand, string hartslag, string rondes, string tijd)
         {
             weerstandLabel.Text = $"{weerstand} Watt";
-            hartslagLabel.Text  = $"{hartslag} BPM";
-            rondesLabel.Text    = $"{rondes} RPM";
-            tijdLabel.Text      = $"{tijd} Minuten";
+            hartslagLabel.Text = $"{hartslag} BPM";
+            rondesLabel.Text = $"{rondes} RPM";
+            tijdLabel.Text = $"{tijd} Minuten";
         }
 
         /**
@@ -294,7 +306,7 @@ namespace IPR2Client.Forms
                 tempTime.Seconds);
 
             // This is where data is sent to the server.
-            if(tempMeasurement.Rondes > 0)
+            if (tempMeasurement.Rondes > 0)
             {
                 Login.Handler.AddMeasurement(tempMeasurement, _name);
                 Login.Handler.ReadMessage();
