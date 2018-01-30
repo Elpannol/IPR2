@@ -42,6 +42,7 @@ namespace IPR2Client
 
         public void ChangePower(string watt)
         {
+            EnableCommand();
             SendCommand($"PW {watt}");
         }
 

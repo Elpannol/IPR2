@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace IPR2
 {
+    delegate void ClientSeppuku(ClientHandler client);
     class Server
     {
         public static DataBase DataBase { get; set; } = new DataBase();
@@ -39,7 +40,8 @@ namespace IPR2
             //making client handlers and adding them to the list
             while (true)
             {
-                ClientHandler handler = new ClientHandler(CheckForClients(_listener));
+                ClientSeppuku seppuku = new ClientSeppuku(KillClient);
+                ClientHandler handler = new ClientHandler(CheckForClients(_listener), seppuku);
                 Handlers.Add(handler);
             }
         }
@@ -74,6 +76,15 @@ namespace IPR2
                 c.ClientThread.Abort();
             }
             Handlers.Clear();
+        }
+
+        public void KillClient(ClientHandler client)
+        {
+            client.Client.GetStream().Close();
+            client.Client.Close();
+            client.ClientThread.Interrupt();
+            client.ClientThread.Abort();
+            Handlers.Remove(client);
         }
     }
 }

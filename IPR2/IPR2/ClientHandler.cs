@@ -14,9 +14,11 @@ namespace IPR2
         public TcpClient Client { get; set; }
         private string _name;
         public Thread ClientThread;
+        public ClientSeppuku Seppuku;
 
-        public ClientHandler(TcpClient client)
+        public ClientHandler(TcpClient client, ClientSeppuku seppuku)
         {
+            Seppuku = seppuku;
             Client = client;
             ClientThread = new Thread(HandleClientThread);
             ClientThread.Start();
@@ -98,11 +100,10 @@ namespace IPR2
                         try
                         {
                             Console.WriteLine($"{_name} disconnected");
-                            ClientSepukku();
+                            Seppuku(this);
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine(e.StackTrace);
                         }
                         break;
                     case "send/clients":
@@ -153,7 +154,7 @@ namespace IPR2
                         break;
                     case "commit/sepukku":
                         Server.DataBase.DeleteClient(_name);
-                        ClientSepukku();
+                        Seppuku(this);
                         break;
                     case "load/user":
                         SendPatients();
@@ -188,7 +189,7 @@ namespace IPR2
             }
             catch (Exception e)
             {
-                ClientSepukku();
+                Seppuku(this);
             }
             return "Client died";
         }
@@ -277,16 +278,6 @@ namespace IPR2
                 //you murderer
             }
             Server.Handlers.Remove(client);
-        }
-
-        public void ClientSepukku()
-        {
-            //When you dishonor the family
-            Client.GetStream().Close();
-            Client.Close();
-            Server.Handlers.Remove(this);
-            ClientThread.Interrupt();
-            ClientThread.Abort();
         }
 
         private static TcpClient SearchForName(string name)

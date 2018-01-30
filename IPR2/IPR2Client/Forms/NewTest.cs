@@ -26,6 +26,7 @@ namespace IPR2Client.Forms
         public int _age;
         public bool _isMan;
         public int currentPower;
+        public int wishedPower;
         public TrainingState state;
         public TrainingChooser chooser;
 
@@ -67,6 +68,7 @@ namespace IPR2Client.Forms
             // Some needed attributes
 
             currentPower = 20;
+            wishedPower = 20;
             measurements = new List<Measurement>();
             _name = name;
             _addTraining = addTraining;
@@ -107,6 +109,20 @@ namespace IPR2Client.Forms
                         else meas = ParseMeasurement(temp);
                     }
 
+                    if(meas != null && meas.Time.Seconds % 5 == 0)
+                    {
+                        if (currentPower > wishedPower)
+                        {
+                            currentPower -= 5;
+                            connection.ChangePower($"{currentPower}");
+                        }
+                        else if (currentPower < wishedPower)
+                        {
+                            currentPower += 5;
+                            connection.ChangePower($"{currentPower}");
+                        }
+                    }
+
                     switch (state)
                     {
                         case TrainingState.START:
@@ -117,7 +133,6 @@ namespace IPR2Client.Forms
                             }
                             SetText(TrainingStateLabel, "Warming up");
                             state = TrainingState.WARMINGUP;
-                            connection.EnableCommand();
                             connection.ChangePower($"{currentPower}");
                             break;
                         case TrainingState.WARMINGUP:
@@ -127,8 +142,7 @@ namespace IPR2Client.Forms
                             }
                             if (meas.Time.Minutes == 2)
                             {
-                                currentPower = 50;
-                                connection.ChangePower($"{currentPower}");
+                                wishedPower = 50;
                                 state = TrainingState.REALTEST;
                                 SetText(TrainingStateLabel, "Test");
                             }
@@ -159,7 +173,7 @@ namespace IPR2Client.Forms
                             {
                                 SetText(TrainingStateLabel, "Cooling down");
                                 state = TrainingState.COOLINGDOWN;
-                                double vo2 = chooser.CalculateVo2(heartRates, currentPower);
+                                double vo2 = chooser.CalculateVo2(heartRates, wishedPower);
                                 if (vo2 == -1)
                                 {
                                     setWarning("Can't calculate vo2, average heartrate too low");
@@ -171,10 +185,8 @@ namespace IPR2Client.Forms
                                     Login.Handler.SendVo2(_name, vo2);
                                 }
 
-                                if (currentPower > 100) currentPower -= 50;
-                                else currentPower = 50;
-                                connection.EnableCommand();
-                                connection.ChangePower($"{currentPower}");
+                                if (wishedPower > 100) wishedPower -= 50;
+                                else wishedPower = 50;
                             }
                             break;
                         case TrainingState.COOLINGDOWN:
@@ -211,35 +223,27 @@ namespace IPR2Client.Forms
             }
             else if (meas.Hartslag <= 130)
             {
-                if (_isMan) currentPower += 50;
-                else currentPower += 25;
-
-                connection.EnableCommand();
-                connection.ChangePower($"{currentPower}");
+                if (_isMan) wishedPower += 50;
+                else wishedPower += 25;
             }
             else
             {
                 if (meas.Rondes < 50)
                 {
-                    if (_isMan) currentPower += 25;
-                    else currentPower += 12;
-                    connection.EnableCommand();
-                    connection.ChangePower($"{currentPower}");
+                    if (_isMan) wishedPower += 25;
+                    else wishedPower += 12;
                 }
                 else if (meas.Rondes > 60)
                 {
-                    if (_isMan) currentPower -= 25;
-                    else currentPower -= 12;
-                    connection.EnableCommand();
-                    connection.ChangePower($"{currentPower}");
+                    if (_isMan) wishedPower -= 25;
+                    else wishedPower -= 12;
                 }
             }
         }
 
         private void setWarning(string text)
         {
-            warningLabel.Visible = true;
-            SetText(warningLabel, "Warming up");
+            SetText(warningLabel, text);
         }
 
 
@@ -346,6 +350,7 @@ namespace IPR2Client.Forms
             }
             else
             {
+                label.Visible = true;
                 label.Text = text;
             }
         }
