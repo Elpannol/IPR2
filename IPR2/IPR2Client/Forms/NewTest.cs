@@ -13,6 +13,7 @@ namespace IPR2Client.Forms
     public partial class NewTest : Form
     {
         private BicycleConnection connection;
+        private string text;
 
         private string _name;
         private int _interval;
@@ -68,7 +69,7 @@ namespace IPR2Client.Forms
             // Some needed attributes
 
             currentPower = 20;
-            wishedPower = 20;
+            wishedPower = 50;
             measurements = new List<Measurement>();
             _name = name;
             _addTraining = addTraining;
@@ -102,14 +103,14 @@ namespace IPR2Client.Forms
                     if (state != TrainingState.STOP)
                     {
                         var temp = connection.ReceiveCommand();
-                        if (temp == "RUN\r")
+                        if (temp == "RUN\r" && temp == "ACK\r")
                         {
                             giveMeas = false;
                         }
                         else meas = ParseMeasurement(temp);
                     }
 
-                    if(meas != null && meas.Time.Seconds % 5 == 0)
+                    if(meas != null && meas.Time.Seconds % 5 == 0 && !meas.Time.ToString().Equals("00:00"))
                     {
                         if (currentPower > wishedPower)
                         {
@@ -206,8 +207,8 @@ namespace IPR2Client.Forms
                 }
                 catch (Exception exception)
                 {
+                    Console.WriteLine(exception.StackTrace);
                     Thread.Sleep(1000);
-                    Console.WriteLine($"Exception! : {exception.StackTrace}");
                 }
             }
         }
@@ -221,22 +222,23 @@ namespace IPR2Client.Forms
                 setWarning("WANRING: Heartrate too high");
 
             }
-            else if (meas.Hartslag <= 130)
+            else if (meas.Hartslag <= 130 && meas.Time.Seconds == 0)
             {
                 if (_isMan) wishedPower += 50;
                 else wishedPower += 25;
             }
             else
             {
+                if (wishedPower != currentPower) return;
                 if (meas.Rondes < 50)
-                {
-                    if (_isMan) wishedPower += 25;
-                    else wishedPower += 12;
-                }
-                else if (meas.Rondes > 60)
                 {
                     if (_isMan) wishedPower -= 25;
                     else wishedPower -= 12;
+                }
+                else if (meas.Rondes > 60)
+                {
+                    if (_isMan) wishedPower += 25;
+                    else wishedPower += 12;
                 }
             }
         }
@@ -249,22 +251,21 @@ namespace IPR2Client.Forms
 
         private void NewTest_FormClosing(object sender, FormClosingEventArgs e)
         {
-
+            connection.EnableCommand();
             connection.ResetBicycle();
             connection.Close();
 
-            if (runThread != null)
-            {
-                runThread.Interrupt();
-                runThread.Abort();
-                Training training = new Training(measurements, _name);
-                results.AddTraining(training);
-            }
-
             Login.Handler.EndTraining();
-
             results.getTrainings();
             results.Visible = true;
+
+            if (runThread != null)
+            {
+                Training training = new Training(measurements, _name);
+                results.AddTraining(training);
+                runThread.Interrupt();
+                runThread.Abort();
+            }
 
             Dispose();
         }
@@ -287,6 +288,7 @@ namespace IPR2Client.Forms
         public Measurement ParseMeasurement(string inputString)
         {
             // Some string parsing
+            text = inputString;
             inputString = inputString.Trim();
             var splitString = inputString.Split();
             var simpleTimeString = splitString[6].Split(':');
