@@ -224,12 +224,13 @@ namespace IPR2Client.Forms
             }
             else if (meas.Hartslag <= 130 && meas.Time.Seconds == 0)
             {
+                if (wishedPower != currentPower || wishedPower >= 200) return;
                 if (_isMan) wishedPower += 50;
                 else wishedPower += 25;
             }
             else
             {
-                if (wishedPower != currentPower) return;
+                if (wishedPower != currentPower || wishedPower >= 200) return;
                 if (meas.Rondes < 50)
                 {
                     if (_isMan) wishedPower -= 25;
